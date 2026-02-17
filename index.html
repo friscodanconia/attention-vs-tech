@@ -987,8 +987,8 @@ function drawChart() {
 
       // Closing line — agency
       const closeAlpha = smoothstep(0.993, 1.0, pct);
-      ctx.globalAlpha = closeAlpha * 0.5;
-      ctx.fillStyle = 'rgba(255,255,255,0.45)';
+      ctx.globalAlpha = closeAlpha * 0.9;
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
       if (m2) {
         ctx.font = `400 ${Math.max(13, W*0.034)}px Inter`;
         ctx.fillText('Attention is finite.', W/2, H * 0.80);
