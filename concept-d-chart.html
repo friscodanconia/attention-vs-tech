@@ -2,8 +2,20 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>The Crossover — Attention vs Technology</title>
+
+<!-- OG Meta -->
+<meta name="description" content="In 2004 you could focus for 2:30. Today it's 47 seconds. Meanwhile, bots now outnumber humans online. Watch the lines cross in real-time.">
+<meta property="og:title" content="The Crossover — Attention vs Technology">
+<meta property="og:description" content="Your attention shrank. The machines grew. Watch twenty years of collision in two minutes.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://friscodanconia.github.io/attention-vs-tech/">
+<meta property="og:image" content="https://friscodanconia.github.io/attention-vs-tech/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Crossover — Attention vs Technology">
+<meta name="twitter:description" content="Your attention shrank. The machines grew. Watch the lines cross.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
 
@@ -142,9 +154,44 @@
   }
 
   @media (max-width: 680px) {
-    .counter-num { min-width: 90px; }
-    .counter-row { flex-wrap: wrap; justify-content: center; }
+    .counter-num { min-width: 90px; font-size: clamp(1.2rem, 5vw, 1.8rem); }
+    .counter-row { flex-wrap: wrap; justify-content: center; gap: 0.3rem; margin-bottom: 0.6rem; }
+    .counter-desc { font-size: clamp(0.8rem, 3.5vw, 1rem); }
+    .counter-label { font-size: clamp(1.1rem, 4vw, 1.5rem); margin-bottom: 1.5rem; }
+    .opening-coda { font-size: clamp(1.2rem, 4.5vw, 1.8rem); margin-top: 1.5rem; }
+    .time-on-page { font-size: clamp(0.9rem, 3.5vw, 1.1rem); margin-top: 1rem; }
+    #scroll-hint { font-size: 0.9rem; bottom: 20px; }
+    .credit-line { font-size: clamp(0.75rem, 3vw, 0.95rem); }
+    .credit-note { font-size: clamp(0.95rem, 3.5vw, 1.2rem); }
   }
+
+  /* noscript fallback */
+  .noscript-content {
+    max-width: 680px; margin: 0 auto; padding: 40px 24px;
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: #e2e8f0; line-height: 1.7;
+  }
+  .noscript-content h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem; font-weight: 600; margin-bottom: 0.5rem;
+  }
+  .noscript-content h2 {
+    font-size: 1.3rem; font-weight: 400; color: rgba(255,255,255,0.5);
+    margin-bottom: 2rem; font-style: italic;
+  }
+  .noscript-content h3 {
+    font-size: 1.1rem; font-weight: 700; margin-top: 2rem; margin-bottom: 0.5rem;
+  }
+  .noscript-content h3.amber { color: #f59e0b; }
+  .noscript-content h3.cyan { color: #06b6d4; }
+  .noscript-content h3.purple { color: #a78bfa; }
+  .noscript-content p { margin-bottom: 1rem; color: rgba(255,255,255,0.75); }
+  .noscript-content .stat { font-size: 1.8rem; font-weight: 800; }
+  .noscript-content .stat.amber { color: #f59e0b; }
+  .noscript-content .stat.cyan { color: #06b6d4; }
+  .noscript-content hr { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 2rem 0; }
+  .noscript-content .sources { font-size: 0.85rem; color: rgba(255,255,255,0.4); }
+  .noscript-content .sources p { margin-bottom: 0.3rem; }
 </style>
 </head>
 <body>
@@ -165,6 +212,51 @@
   <span>Scroll to begin</span>
   <div class="scroll-arrow"></div>
 </div>
+
+<noscript>
+<div class="noscript-content">
+  <h1>The Crossover</h1>
+  <h2>Attention vs Technology — Twenty years of collision</h2>
+
+  <h3 class="amber">Your Attention</h3>
+  <p>In 2004, Gloria Mark at UC Irvine measured how long a person could focus on a single screen before switching: <span class="stat amber">2 minutes 30 seconds.</span></p>
+  <p>By 2020, that number had fallen to <span class="stat amber">47 seconds</span> — a 70% decline in sixteen years.</p>
+  <p>We check our phones 205 times a day. We read 12.6 books a year, down from 15.6. Songs have shed 40 seconds. 53% of us abandon a webpage after 3 seconds.</p>
+  <p>In 2017, Ward et al. published "Brain Drain" — proving that a phone sitting on your desk, face-down, powered off, measurably reduces your cognitive performance. The mere presence of the device is enough.</p>
+
+  <hr>
+
+  <h3 class="cyan">The Machines</h3>
+  <p>In 2004, bots and AI content represented roughly <span class="stat cyan">5%</span> of internet traffic.</p>
+  <p>GPT-1 launched in 2018 with 117 million parameters. GPT-3 followed in 2020 with 175 billion — a 1,500x increase in two years.</p>
+  <p>By 2024, bots officially outnumbered humans online: <span class="stat cyan">51%</span> of all web traffic. Half of all new web articles — 50.3% — are now AI-generated.</p>
+  <p>500 hours of video are uploaded to YouTube every minute. 347 billion emails are sent every day. The noise is exponential.</p>
+
+  <hr>
+
+  <h3 class="purple">The Crossover</h3>
+  <p>In 2016, digital advertising revenue surpassed television for the first time — $72.5B vs $71.3B. The attention economy had its first milestone.</p>
+  <p>In 2024, bot traffic surpassed human traffic. The lines crossed again.</p>
+  <p>By 2026, Europol projects that 90% of online content will be synthetic.</p>
+  <p><strong>Your attention shrank. The machines grew. And the lines crossed.</strong></p>
+  <p>The question is what happens next.</p>
+
+  <hr>
+
+  <div class="sources">
+    <p><strong>Sources:</strong></p>
+    <p>Gloria Mark, <em>Attention Span</em> (2023) — UC Irvine</p>
+    <p>Ward, Duke, Gneezy & Bos — <em>J. Assoc. Consumer Research</em> (2017)</p>
+    <p>Imperva Bad Bot Report (2024) — 51% bot traffic</p>
+    <p>Originality.ai / Graphite.io (2024) — 50.3% AI-generated articles</p>
+    <p>OpenAI — GPT-1 through GPT-3 parameter growth (2018–2020)</p>
+    <p>eMarketer / IAB (2016) — Digital ads surpass TV</p>
+    <p>Europol Innovation Lab (2022) — 90% synthetic projection for 2026</p>
+    <p>Gallup (2022) — 12.6 books/year, lowest tracked</p>
+    <p>BLS American Time Use Survey — Reading for pleasure decline</p>
+  </div>
+</div>
+</noscript>
 
 <div id="credits-container">
   <div id="credits-scroll">
@@ -267,7 +359,14 @@ setInterval(tickCounters, 80);
 // ============================================================
 //  CHART GEOMETRY — generous margins so nothing bleeds
 // ============================================================
-const MARGIN = { top: 100, right: 80, bottom: 90, left: 80 };
+// Responsive margins — tighter on mobile
+const isMobile = () => W < 680;
+const MARGIN = {
+  get top() { return isMobile() ? 70 : 100; },
+  get right() { return isMobile() ? 30 : 80; },
+  get bottom() { return isMobile() ? 60 : 90; },
+  get left() { return isMobile() ? 30 : 80; },
+};
 function chartX(yearFrac) {
   return MARGIN.left + yearFrac * (W - MARGIN.left - MARGIN.right);
 }
@@ -343,10 +442,11 @@ function drawIntroFrames() {
 
     if (a1 > 0.01) {
       ctx.textAlign = 'center';
+      const m = isMobile();
 
       // Title
       ctx.globalAlpha = a1 * 0.9;
-      ctx.font = `800 ${Math.max(42, W * 0.05)}px Inter`;
+      ctx.font = `800 ${m ? Math.max(28, W*0.08) : Math.max(42, W*0.05)}px Inter`;
       ctx.fillStyle = '#f59e0b';
       ctx.fillText('YOUR ATTENTION', W/2, H * 0.28);
 
@@ -354,24 +454,24 @@ function drawIntroFrames() {
       ctx.globalAlpha = a1 * 0.5;
       ctx.fillRect(W/2 - 50, H * 0.30, 100, 2);
 
-      // Description — Playfair italic for consistency
+      // Description — Playfair italic
       ctx.globalAlpha = a1 * 0.8;
-      ctx.font = `italic 400 ${Math.max(24, W * 0.026)}px 'Playfair Display', serif`;
+      ctx.font = `italic 400 ${m ? Math.max(16, W*0.042) : Math.max(24, W*0.026)}px 'Playfair Display', serif`;
       ctx.fillStyle = 'rgba(255,255,255,0.85)';
-      ctx.fillText('How long you can focus on a single screen', W/2, H * 0.37);
-      ctx.fillText('before your mind switches to something else.', W/2, H * 0.37 + Math.max(36, W * 0.035));
+      ctx.fillText('How long you can focus on a single screen', W/2, H * 0.37, W - 40);
+      ctx.fillText('before your mind switches to something else.', W/2, H * 0.37 + (m ? 28 : Math.max(36, W*0.035)), W - 40);
 
       // THE NUMBER — biggest thing on screen, the hero
       ctx.globalAlpha = a1;
-      ctx.font = `800 ${Math.max(80, W * 0.1)}px Inter`;
+      ctx.font = `800 ${m ? Math.max(56, W*0.16) : Math.max(80, W*0.1)}px Inter`;
       ctx.fillStyle = '#f59e0b';
       ctx.fillText('2:30', W/2, H * 0.66);
 
       // Number context — Playfair italic
       ctx.globalAlpha = a1 * 0.6;
-      ctx.font = `italic 400 ${Math.max(22, W * 0.024)}px 'Playfair Display', serif`;
+      ctx.font = `italic 400 ${m ? Math.max(15, W*0.038) : Math.max(22, W*0.024)}px 'Playfair Display', serif`;
       ctx.fillStyle = 'rgba(255,255,255,0.7)';
-      ctx.fillText('That was 2004. Gloria Mark, UC Irvine.', W/2, H * 0.78);
+      ctx.fillText('That was 2004. Gloria Mark, UC Irvine.', W/2, H * 0.78, W - 40);
     }
   }
 
@@ -383,10 +483,11 @@ function drawIntroFrames() {
 
     if (a2 > 0.01) {
       ctx.textAlign = 'center';
+      const m = isMobile();
 
       // Title
       ctx.globalAlpha = a2 * 0.9;
-      ctx.font = `800 ${Math.max(42, W * 0.05)}px Inter`;
+      ctx.font = `800 ${m ? Math.max(28, W*0.08) : Math.max(42, W*0.05)}px Inter`;
       ctx.fillStyle = '#06b6d4';
       ctx.fillText('THE MACHINES', W/2, H * 0.28);
 
@@ -396,22 +497,22 @@ function drawIntroFrames() {
 
       // Description — Playfair italic
       ctx.globalAlpha = a2 * 0.8;
-      ctx.font = `italic 400 ${Math.max(24, W * 0.026)}px 'Playfair Display', serif`;
+      ctx.font = `italic 400 ${m ? Math.max(16, W*0.042) : Math.max(24, W*0.026)}px 'Playfair Display', serif`;
       ctx.fillStyle = 'rgba(255,255,255,0.85)';
-      ctx.fillText('Bots, AI content, automated decisions.', W/2, H * 0.37);
-      ctx.fillText('The share of the internet that isn\'t human.', W/2, H * 0.37 + Math.max(36, W * 0.035));
+      ctx.fillText('Bots, AI content, automated decisions.', W/2, H * 0.37, W - 40);
+      ctx.fillText('The share of the internet that isn\'t human.', W/2, H * 0.37 + (m ? 28 : Math.max(36, W*0.035)), W - 40);
 
       // THE NUMBER — biggest thing on screen
       ctx.globalAlpha = a2;
-      ctx.font = `800 ${Math.max(80, W * 0.1)}px Inter`;
+      ctx.font = `800 ${m ? Math.max(56, W*0.16) : Math.max(80, W*0.1)}px Inter`;
       ctx.fillStyle = '#06b6d4';
       ctx.fillText('5%', W/2, H * 0.66);
 
       // Number context — Playfair italic
       ctx.globalAlpha = a2 * 0.6;
-      ctx.font = `italic 400 ${Math.max(22, W * 0.024)}px 'Playfair Display', serif`;
+      ctx.font = `italic 400 ${m ? Math.max(15, W*0.038) : Math.max(22, W*0.024)}px 'Playfair Display', serif`;
       ctx.fillStyle = 'rgba(255,255,255,0.7)';
-      ctx.fillText('That was 2004. Barely a blip.', W/2, H * 0.78);
+      ctx.fillText('That was 2004. Barely a blip.', W/2, H * 0.78, W - 40);
     }
   }
 
@@ -581,47 +682,69 @@ function drawChart() {
     ctx.fillStyle = '#cffafe';
     ctx.beginPath(); ctx.arc(cx, tY, 2.5, 0, Math.PI*2); ctx.fill();
 
-    // Value labels near dots
+    // Value labels near dots — flip side on mobile when near edge
     ctx.globalAlpha = vis * 0.9;
     const humanSec = Math.round(interpCurve(humanPts, curYear) * 150);
     const humanTime = humanSec >= 60
       ? Math.floor(humanSec/60) + ':' + String(humanSec%60).padStart(2,'0')
       : humanSec + 's';
-    ctx.font = `700 ${Math.max(15, W*0.014)}px Inter`;
-    ctx.textAlign = 'left';
+    const labelSz = isMobile() ? Math.max(12, W*0.03) : Math.max(15, W*0.014);
+    ctx.font = `700 ${labelSz}px Inter`;
+    const flipSide = cx > W * 0.7;
+    ctx.textAlign = flipSide ? 'right' : 'left';
+    const labelOff = flipSide ? -14 : 14;
     ctx.fillStyle = '#f59e0b';
-    ctx.fillText('Focus: ' + humanTime, cx + 14, hY - 12);
+    ctx.fillText('Focus: ' + humanTime, cx + labelOff, hY - 12);
 
     const techPctVal = Math.round(interpCurve(techPts, curYear) * 100);
     ctx.fillStyle = '#06b6d4';
-    ctx.fillText('Machine: ' + techPctVal + '%', cx + 14, tY + 22);
+    ctx.fillText('Machine: ' + techPctVal + '%', cx + labelOff, tY + 22);
   }
 
   // --- LEGEND (top of page) ---
   if (pct > 0.20) {
-    const spotDim = spotlight.active ? 0.3 : 1; // dim legend during spotlight
-    const ly = 32;
-    const sz = Math.max(14, W * 0.013);
-    const subSz = Math.max(11, W * 0.01);
-    ctx.globalAlpha = vis * 0.85 * spotDim;
-    ctx.textAlign = 'left';
-    ctx.font = `700 ${sz}px Inter`;
-    ctx.fillStyle = '#f59e0b';
-    ctx.fillRect(MARGIN.left, ly - 4, 22, 3);
-    ctx.fillText('YOUR ATTENTION SPAN', MARGIN.left + 30, ly);
-    ctx.globalAlpha = vis * 0.5 * spotDim;
-    ctx.font = `400 ${subSz}px Inter`;
-    ctx.fillText('Time on a single screen before switching', MARGIN.left + 30, ly + 16);
+    const spotDim = spotlight.active ? 0.3 : 1;
+    const mob = isMobile();
 
-    ctx.globalAlpha = vis * 0.85 * spotDim;
-    ctx.textAlign = 'right';
-    ctx.font = `700 ${sz}px Inter`;
-    ctx.fillStyle = '#06b6d4';
-    ctx.fillRect(W - MARGIN.right - 22, ly - 4, 22, 3);
-    ctx.fillText('DIGITAL / AI FOOTPRINT', W - MARGIN.right - 30, ly);
-    ctx.globalAlpha = vis * 0.5 * spotDim;
-    ctx.font = `400 ${subSz}px Inter`;
-    ctx.fillText('Bot traffic, AI content, automated decisions', W - MARGIN.right - 30, ly + 16);
+    if (mob) {
+      // Mobile: stacked legend, compact
+      const sz = Math.max(11, W * 0.028);
+      const ly1 = 18, ly2 = 38;
+      ctx.textAlign = 'left';
+      ctx.globalAlpha = vis * 0.85 * spotDim;
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillRect(MARGIN.left, ly1 - 3, 16, 2.5);
+      ctx.font = `700 ${sz}px Inter`;
+      ctx.fillText('ATTENTION SPAN', MARGIN.left + 22, ly1);
+
+      ctx.fillStyle = '#06b6d4';
+      ctx.fillRect(MARGIN.left, ly2 - 3, 16, 2.5);
+      ctx.fillText('DIGITAL / AI FOOTPRINT', MARGIN.left + 22, ly2);
+    } else {
+      // Desktop: left/right legend with sub-copy
+      const ly = 32;
+      const sz = Math.max(14, W * 0.013);
+      const subSz = Math.max(11, W * 0.01);
+      ctx.globalAlpha = vis * 0.85 * spotDim;
+      ctx.textAlign = 'left';
+      ctx.font = `700 ${sz}px Inter`;
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillRect(MARGIN.left, ly - 4, 22, 3);
+      ctx.fillText('YOUR ATTENTION SPAN', MARGIN.left + 30, ly);
+      ctx.globalAlpha = vis * 0.5 * spotDim;
+      ctx.font = `400 ${subSz}px Inter`;
+      ctx.fillText('Time on a single screen before switching', MARGIN.left + 30, ly + 16);
+
+      ctx.globalAlpha = vis * 0.85 * spotDim;
+      ctx.textAlign = 'right';
+      ctx.font = `700 ${sz}px Inter`;
+      ctx.fillStyle = '#06b6d4';
+      ctx.fillRect(W - MARGIN.right - 22, ly - 4, 22, 3);
+      ctx.fillText('DIGITAL / AI FOOTPRINT', W - MARGIN.right - 30, ly);
+      ctx.globalAlpha = vis * 0.5 * spotDim;
+      ctx.font = `400 ${subSz}px Inter`;
+      ctx.fillText('Bot traffic, AI content, automated decisions', W - MARGIN.right - 30, ly + 16);
+    }
   }
 
   // =====================================================
@@ -681,8 +804,8 @@ function drawChart() {
       ctx.beginPath(); ctx.arc(fx, dotY, 6 * pulse, 0, Math.PI*2); ctx.fill();
 
       // --- The Spotlight Card (centered on screen) ---
-      const cardW = Math.min(580, W * 0.55);
-      const cardH = 240;
+      const cardW = isMobile() ? Math.min(W - 40, W * 0.92) : Math.min(580, W * 0.55);
+      const cardH = isMobile() ? 200 : 240;
       const cardX = (W - cardW) / 2;
       const cardCY = H * 0.48;
       const cardTop = cardCY - cardH / 2;
@@ -719,22 +842,23 @@ function drawChart() {
       ctx.textAlign = 'center';
 
       // Year — zone 1
+      const mob = isMobile();
       ctx.globalAlpha = cardAlpha * 0.8;
-      ctx.font = `800 ${Math.max(28, W * 0.03)}px Inter`;
+      ctx.font = `800 ${mob ? Math.max(20, W*0.055) : Math.max(28, W*0.03)}px Inter`;
       ctx.fillStyle = color;
       ctx.fillText(yr, W / 2, innerTop + zone * 0.5 + 10);
 
       // Title — zone 2
       ctx.globalAlpha = cardAlpha;
-      ctx.font = `800 ${Math.max(40, W * 0.045)}px Inter`;
+      ctx.font = `800 ${mob ? Math.max(24, W*0.065) : Math.max(40, W*0.045)}px Inter`;
       ctx.fillStyle = '#fff';
-      ctx.fillText(title, W / 2, innerTop + zone * 1.5 + 14);
+      ctx.fillText(title, W / 2, innerTop + zone * 1.5 + 14, cardW - 40);
 
       // Detail — zone 3
       ctx.globalAlpha = cardAlpha * 0.7;
-      ctx.font = `italic 400 ${Math.max(16, W * 0.017)}px 'Playfair Display', serif`;
+      ctx.font = `italic 400 ${mob ? Math.max(13, W*0.035) : Math.max(16, W*0.017)}px 'Playfair Display', serif`;
       ctx.fillStyle = 'rgba(255,255,255,0.7)';
-      ctx.fillText(detail, W / 2, innerTop + zone * 2.5 + 6);
+      ctx.fillText(detail, W / 2, innerTop + zone * 2.5 + 6, cardW - 40);
     }
   }
 
@@ -796,6 +920,13 @@ function drawChart() {
       ctx.font = `italic 400 ${Math.max(20, W*0.022)}px 'Playfair Display', serif`;
       ctx.fillStyle = 'rgba(255,255,255,0.7)';
       ctx.fillText('The question is what happens next.', W/2, H * 0.72);
+
+      // CTA — appears last
+      const ctaAlpha = smoothstep(0.993, 1.0, pct);
+      ctx.globalAlpha = ctaAlpha * 0.55;
+      ctx.font = `500 ${Math.max(15, W*0.015)}px Inter`;
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.fillText('Close this tab. Do nothing for 60 seconds.', W/2, H * 0.84);
     }
   }
 
