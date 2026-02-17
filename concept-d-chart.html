@@ -312,10 +312,10 @@ const SPEED = 1 / (DURATION * 60);
 // ============================================================
 //  TIMELINE PHASES (45s base + ~27s spotlight pauses ≈ 72s total)
 //  0.00–0.01  Opening counters (HTML overlay)
-//  0.01–0.03  Intro Frame 1: YOUR ATTENTION (~0.56s)
-//  0.03–0.21  Intro Frame 2: THE MACHINES (~5s)
-//  0.21–0.32  Transition: "Here is what happened." (~3s)
-//  0.32–0.80  Chart draws with spotlight pauses
+//  0.01–0.10  Intro Frame 1: YOUR ATTENTION (~2.5s)
+//  0.10–0.28  Intro Frame 2: THE MACHINES (~5s)
+//  0.28–0.39  Transition: "Here is what happened." (~3s)
+//  0.39–0.80  Chart draws with spotlight pauses
 //  0.82–0.96  Closing 1: "You're still here" (~3.9s)
 //  0.965–1.00 Closing 2: Narrative payoff + credits
 // ============================================================
@@ -437,10 +437,10 @@ function drawIntroFrames() {
   ctx.fillStyle = '#08090f';
   ctx.fillRect(0, 0, W, H);
 
-  // FRAME 1: YOUR ATTENTION (amber) — pct 0.01 to 0.03 (~3 seconds)
-  if (pct >= 0.01 && pct < 0.035) {
-    const fadeIn1 = smoothstep(0.01, 0.013, pct);
-    const fadeOut1 = 1 - smoothstep(0.025, 0.033, pct);
+  // FRAME 1: YOUR ATTENTION (amber) — pct 0.01 to 0.10 (~2.5s)
+  if (pct >= 0.01 && pct < 0.105) {
+    const fadeIn1 = smoothstep(0.01, 0.015, pct);
+    const fadeOut1 = 1 - smoothstep(0.09, 0.10, pct);
     const a1 = fadeIn1 * fadeOut1;
 
     if (a1 > 0.01) {
@@ -491,10 +491,10 @@ function drawIntroFrames() {
     }
   }
 
-  // FRAME 2: THE MACHINES (cyan) — pct 0.03 to 0.21
-  if (pct >= 0.025 && pct < 0.216) {
-    const fadeIn2 = smoothstep(0.03, 0.033, pct);
-    const fadeOut2 = 1 - smoothstep(0.20, 0.21, pct);
+  // FRAME 2: THE MACHINES (cyan) — pct 0.10 to 0.28
+  if (pct >= 0.095 && pct < 0.286) {
+    const fadeIn2 = smoothstep(0.10, 0.105, pct);
+    const fadeOut2 = 1 - smoothstep(0.27, 0.28, pct);
     const a2 = fadeIn2 * fadeOut2;
 
     if (a2 > 0.01) {
@@ -544,10 +544,10 @@ function drawIntroFrames() {
     }
   }
 
-  // FRAME 3: TRANSITION — pct 0.21 to 0.32
-  if (pct >= 0.205 && pct < 0.325) {
-    const fadeIn3 = smoothstep(0.21, 0.215, pct);
-    const fadeOut3 = 1 - smoothstep(0.31, 0.32, pct);
+  // FRAME 3: TRANSITION — pct 0.28 to 0.39
+  if (pct >= 0.275 && pct < 0.395) {
+    const fadeIn3 = smoothstep(0.28, 0.285, pct);
+    const fadeOut3 = 1 - smoothstep(0.38, 0.39, pct);
     const a3 = fadeIn3 * fadeOut3;
 
     if (a3 > 0.01) {
@@ -572,8 +572,8 @@ function drawIntroFrames() {
 //  MAIN CHART
 // ============================================================
 function currentYear() {
-  // Chart draws during pct 0.32–0.80
-  const chartPct = Math.max(0, Math.min(1, (pct - 0.32) / 0.48));
+  // Chart draws during pct 0.39–0.80
+  const chartPct = Math.max(0, Math.min(1, (pct - 0.39) / 0.41));
   return 2004 + chartPct * 22;
 }
 
@@ -581,9 +581,9 @@ function drawChart() {
   ctx.fillStyle = '#08090f';
   ctx.fillRect(0, 0, W, H);
 
-  if (pct < 0.31) return; // not in chart phase yet
+  if (pct < 0.38) return; // not in chart phase yet
 
-  const fadeIn = smoothstep(0.31, 0.33, pct);
+  const fadeIn = smoothstep(0.38, 0.40, pct);
   // Fade everything out when closing begins so "You're still here" gets a clean screen
   const closingDim = 1 - smoothstep(0.80, 0.84, pct);
   const vis = fadeIn * closingDim; // master visibility for chart elements
@@ -736,7 +736,7 @@ function drawChart() {
   }
 
   // --- LEGEND (top of page) ---
-  if (pct > 0.32) {
+  if (pct > 0.39) {
     const spotDim = spotlight.active ? 0.3 : 1;
     const mob = isMobile();
 
@@ -1074,7 +1074,7 @@ function loop(now) {
 
   if (isPlaying && progress < 1) {
     // Only check spotlights once we're in the chart phase (past intro frames)
-    if (progress >= 0.32) checkSpotlight();
+    if (progress >= 0.39) checkSpotlight();
 
     if (spotlight.active) {
       // PAUSE chart progress — only tick the spotlight timer
@@ -1090,7 +1090,7 @@ function loop(now) {
   document.getElementById('progress-bar').style.width = (pct*100)+'%';
 
   // Decide what to render based on phase
-  if (pct < 0.31) {
+  if (pct < 0.38) {
     drawIntroFrames();
   } else {
     drawChart();
