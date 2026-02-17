@@ -306,17 +306,17 @@ const T0 = Date.now();
 let pct = 0, frame = 0;
 
 let progress = 0, isPlaying = false;
-const DURATION = 32; // seconds total (excluding spotlight pauses) — graph is just motion between cards
+const DURATION = 38; // seconds total (excluding spotlight pauses) — graph is just motion between cards
 const SPEED = 1 / (DURATION * 60);
 
 // ============================================================
 //  TIMELINE PHASES (45s base + ~27s spotlight pauses ≈ 72s total)
 //  0.00–0.01  Opening counters (HTML overlay)
-//  0.01–0.10  Intro Frame 1: YOUR ATTENTION (~2.5s)
-//  0.10–0.28  Intro Frame 2: THE MACHINES (~5s)
-//  0.28–0.39  Transition: "Here is what happened." (~3s)
-//  0.39–0.82  Chart draws with spotlight pauses
-//  0.84–0.96  Closing 1: "You're still here" (~3.8s)
+//  0.01–0.13  Intro Frame 1: YOUR ATTENTION (~4.6s)
+//  0.13–0.31  Intro Frame 2: THE MACHINES (~6.8s)
+//  0.31–0.42  Transition: "Here is what happened." (~4.2s)
+//  0.42–0.82  Chart draws with spotlight pauses (~15.2s)
+//  0.84–0.96  Closing 1: "You're still here" (~4.6s)
 //  0.965–1.00 Closing 2: Narrative payoff + credits
 // ============================================================
 
@@ -437,10 +437,10 @@ function drawIntroFrames() {
   ctx.fillStyle = '#08090f';
   ctx.fillRect(0, 0, W, H);
 
-  // FRAME 1: YOUR ATTENTION (amber) — pct 0.01 to 0.10 (~2.5s)
-  if (pct >= 0.01 && pct < 0.105) {
+  // FRAME 1: YOUR ATTENTION (amber) — pct 0.01 to 0.13 (~4.6s)
+  if (pct >= 0.01 && pct < 0.135) {
     const fadeIn1 = smoothstep(0.01, 0.015, pct);
-    const fadeOut1 = 1 - smoothstep(0.09, 0.10, pct);
+    const fadeOut1 = 1 - smoothstep(0.12, 0.13, pct);
     const a1 = fadeIn1 * fadeOut1;
 
     if (a1 > 0.01) {
@@ -491,10 +491,10 @@ function drawIntroFrames() {
     }
   }
 
-  // FRAME 2: THE MACHINES (cyan) — pct 0.10 to 0.28
-  if (pct >= 0.095 && pct < 0.286) {
-    const fadeIn2 = smoothstep(0.10, 0.105, pct);
-    const fadeOut2 = 1 - smoothstep(0.27, 0.28, pct);
+  // FRAME 2: THE MACHINES (cyan) — pct 0.13 to 0.31
+  if (pct >= 0.125 && pct < 0.316) {
+    const fadeIn2 = smoothstep(0.13, 0.135, pct);
+    const fadeOut2 = 1 - smoothstep(0.30, 0.31, pct);
     const a2 = fadeIn2 * fadeOut2;
 
     if (a2 > 0.01) {
@@ -544,10 +544,10 @@ function drawIntroFrames() {
     }
   }
 
-  // FRAME 3: TRANSITION — pct 0.28 to 0.39
-  if (pct >= 0.275 && pct < 0.395) {
-    const fadeIn3 = smoothstep(0.28, 0.285, pct);
-    const fadeOut3 = 1 - smoothstep(0.38, 0.39, pct);
+  // FRAME 3: TRANSITION — pct 0.31 to 0.42
+  if (pct >= 0.305 && pct < 0.425) {
+    const fadeIn3 = smoothstep(0.31, 0.315, pct);
+    const fadeOut3 = 1 - smoothstep(0.41, 0.42, pct);
     const a3 = fadeIn3 * fadeOut3;
 
     if (a3 > 0.01) {
@@ -572,8 +572,8 @@ function drawIntroFrames() {
 //  MAIN CHART
 // ============================================================
 function currentYear() {
-  // Chart draws during pct 0.39–0.82
-  const chartPct = Math.max(0, Math.min(1, (pct - 0.39) / 0.43));
+  // Chart draws during pct 0.42–0.82
+  const chartPct = Math.max(0, Math.min(1, (pct - 0.42) / 0.40));
   return 2004 + chartPct * 22;
 }
 
@@ -581,9 +581,9 @@ function drawChart() {
   ctx.fillStyle = '#08090f';
   ctx.fillRect(0, 0, W, H);
 
-  if (pct < 0.38) return; // not in chart phase yet
+  if (pct < 0.41) return; // not in chart phase yet
 
-  const fadeIn = smoothstep(0.38, 0.40, pct);
+  const fadeIn = smoothstep(0.41, 0.43, pct);
   // Fade everything out when closing begins so "You're still here" gets a clean screen
   const closingDim = 1 - smoothstep(0.82, 0.86, pct);
   const vis = fadeIn * closingDim; // master visibility for chart elements
@@ -736,7 +736,7 @@ function drawChart() {
   }
 
   // --- LEGEND (top of page) ---
-  if (pct > 0.39) {
+  if (pct > 0.42) {
     const spotDim = spotlight.active ? 0.3 : 1;
     const mob = isMobile();
 
@@ -1028,7 +1028,7 @@ function checkSpotlight() {
   for (const a of annotations) {
     const [yr, type] = a;
     if (spotlight.triggeredYears.has(yr)) continue;
-    if (curYear >= yr + 0.3 && curYear <= yr + 1.0) {
+    if (curYear >= yr + 1.5 && curYear <= yr + 2.5) {
       spotlight.active = true;
       spotlight.anno = a;
       spotlight.elapsed = 0;
@@ -1074,7 +1074,7 @@ function loop(now) {
 
   if (isPlaying && progress < 1) {
     // Only check spotlights once we're in the chart phase (past intro frames)
-    if (progress >= 0.39) checkSpotlight();
+    if (progress >= 0.42) checkSpotlight();
 
     if (spotlight.active) {
       // PAUSE chart progress — only tick the spotlight timer
@@ -1090,7 +1090,7 @@ function loop(now) {
   document.getElementById('progress-bar').style.width = (pct*100)+'%';
 
   // Decide what to render based on phase
-  if (pct < 0.38) {
+  if (pct < 0.41) {
     drawIntroFrames();
   } else {
     drawChart();
