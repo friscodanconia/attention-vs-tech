@@ -306,7 +306,7 @@ const T0 = Date.now();
 let pct = 0, frame = 0;
 
 let progress = 0, isPlaying = false;
-const DURATION = 28; // seconds total (excluding spotlight pauses) — graph is just motion between cards
+const DURATION = 32; // seconds total (excluding spotlight pauses) — graph is just motion between cards
 const SPEED = 1 / (DURATION * 60);
 
 // ============================================================
@@ -315,8 +315,8 @@ const SPEED = 1 / (DURATION * 60);
 //  0.01–0.10  Intro Frame 1: YOUR ATTENTION (~2.5s)
 //  0.10–0.28  Intro Frame 2: THE MACHINES (~5s)
 //  0.28–0.39  Transition: "Here is what happened." (~3s)
-//  0.39–0.80  Chart draws with spotlight pauses
-//  0.82–0.96  Closing 1: "You're still here" (~3.9s)
+//  0.39–0.82  Chart draws with spotlight pauses
+//  0.84–0.96  Closing 1: "You're still here" (~3.8s)
 //  0.965–1.00 Closing 2: Narrative payoff + credits
 // ============================================================
 
@@ -572,8 +572,8 @@ function drawIntroFrames() {
 //  MAIN CHART
 // ============================================================
 function currentYear() {
-  // Chart draws during pct 0.39–0.80
-  const chartPct = Math.max(0, Math.min(1, (pct - 0.39) / 0.41));
+  // Chart draws during pct 0.39–0.82
+  const chartPct = Math.max(0, Math.min(1, (pct - 0.39) / 0.43));
   return 2004 + chartPct * 22;
 }
 
@@ -585,7 +585,7 @@ function drawChart() {
 
   const fadeIn = smoothstep(0.38, 0.40, pct);
   // Fade everything out when closing begins so "You're still here" gets a clean screen
-  const closingDim = 1 - smoothstep(0.80, 0.84, pct);
+  const closingDim = 1 - smoothstep(0.82, 0.86, pct);
   const vis = fadeIn * closingDim; // master visibility for chart elements
   const curYear = currentYear();
   const curFrac = yearToFrac(curYear);
@@ -691,7 +691,7 @@ function drawChart() {
   ctx.stroke();
 
   // --- CURSOR + DOTS ---
-  if (curFrac > 0.005 && pct < 0.83) {
+  if (curFrac > 0.005 && pct < 0.85) {
     const cx = chartX(curFrac);
     ctx.globalAlpha = vis * 0.12;
     ctx.beginPath();
@@ -907,9 +907,9 @@ function drawChart() {
     }
   }
 
-  // --- CLOSING FRAME 1: "You're still here" (pct 0.82 → 0.96) ---
-  if (pct > 0.81 && pct < 0.965) {
-    const c1In = smoothstep(0.82, 0.83, pct);
+  // --- CLOSING FRAME 1: "You're still here" (pct 0.84 → 0.96) ---
+  if (pct > 0.83 && pct < 0.965) {
+    const c1In = smoothstep(0.84, 0.85, pct);
     const c1Out = 1 - smoothstep(0.945, 0.96, pct);
     const c1 = c1In * c1Out;
     if (c1 > 0.01) {
@@ -1028,7 +1028,7 @@ function checkSpotlight() {
   for (const a of annotations) {
     const [yr, type] = a;
     if (spotlight.triggeredYears.has(yr)) continue;
-    if (curYear >= yr - 0.1 && curYear <= yr + 0.5) {
+    if (curYear >= yr + 0.3 && curYear <= yr + 1.0) {
       spotlight.active = true;
       spotlight.anno = a;
       spotlight.elapsed = 0;
