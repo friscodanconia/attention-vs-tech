@@ -341,10 +341,12 @@ function resize() {
 resize();
 window.addEventListener('resize', resize);
 
-// Counters
+// Counters — seed with non-zero values so they never look broken
 const EPS = 4_016_203, YPS = 500/60, APS = 12;
+// Seed: pretend page loaded 0.5s ago so counters start moving immediately
+const SEED = 0.5;
 function tickCounters() {
-  const t = (Date.now()-T0)/1000;
+  const t = (Date.now()-T0)/1000 + SEED;
   const ce = document.getElementById('c-emails');
   const cy = document.getElementById('c-youtube');
   const ca = document.getElementById('c-ai');
@@ -352,8 +354,9 @@ function tickCounters() {
   if (ce) ce.textContent = Math.floor(t*EPS).toLocaleString();
   if (cy) cy.textContent = Math.floor(t*YPS).toLocaleString();
   if (ca) ca.textContent = Math.floor(t*APS).toLocaleString();
-  if (cs) cs.textContent = Math.floor(t);
+  if (cs) cs.textContent = Math.max(1, Math.floor((Date.now()-T0)/1000));
 }
+tickCounters(); // run immediately so first paint is never 0
 setInterval(tickCounters, 80);
 
 // ============================================================
@@ -976,11 +979,24 @@ function drawChart() {
       ctx.fillStyle = 'rgba(255,255,255,0.7)';
       if (m2) {
         ctx.font = `400 ${Math.max(15, W*0.04)}px Inter`;
-        ctx.fillText('The question is', W/2, H * 0.66);
-        ctx.fillText('what happens next.', W/2, H * 0.66 + 22);
+        ctx.fillText('The question is', W/2, H * 0.64);
+        ctx.fillText('what happens next.', W/2, H * 0.64 + 22);
       } else {
         ctx.font = `italic 400 ${Math.max(20, W*0.022)}px 'Playfair Display', serif`;
-        ctx.fillText('The question is what happens next.', W/2, H * 0.72);
+        ctx.fillText('The question is what happens next.', W/2, H * 0.68);
+      }
+
+      // Closing line — agency
+      const closeAlpha = smoothstep(0.993, 1.0, pct);
+      ctx.globalAlpha = closeAlpha * 0.5;
+      ctx.fillStyle = 'rgba(255,255,255,0.45)';
+      if (m2) {
+        ctx.font = `400 ${Math.max(13, W*0.034)}px Inter`;
+        ctx.fillText('Attention is finite.', W/2, H * 0.80);
+        ctx.fillText('Choose where yours goes.', W/2, H * 0.80 + 20);
+      } else {
+        ctx.font = `italic 400 ${Math.max(16, W*0.017)}px 'Playfair Display', serif`;
+        ctx.fillText('Attention is finite. Choose where yours goes.', W/2, H * 0.82);
       }
 
     }
