@@ -315,9 +315,9 @@ const SPEED = 1 / (DURATION * 60);
 //  0.01–0.03  Intro Frame 1: YOUR ATTENTION (~1s)
 //  0.03–0.10  Intro Frame 2: THE MACHINES (~5s)
 //  0.10–0.14  Transition: "Here is what happened." (~2s)
-//  0.14–0.88  Chart draws with spotlight pauses
-//  0.89–0.93  Closing 1: "You're still here"
-//  0.94–1.00  Closing 2: Narrative payoff + credits
+//  0.161–0.80  Chart draws with spotlight pauses
+//  0.82–0.96  Closing 1: "You're still here" (~3.9s)
+//  0.965–1.00 Closing 2: Narrative payoff + credits
 // ============================================================
 
 function startPlay() {
@@ -491,10 +491,10 @@ function drawIntroFrames() {
     }
   }
 
-  // FRAME 2: THE MACHINES (cyan) — pct 0.03 to 0.10 (~5s at 45s base)
-  if (pct >= 0.025 && pct < 0.105) {
+  // FRAME 2: THE MACHINES (cyan) — pct 0.03 to 0.121
+  if (pct >= 0.025 && pct < 0.126) {
     const fadeIn2 = smoothstep(0.03, 0.033, pct);
-    const fadeOut2 = 1 - smoothstep(0.09, 0.10, pct);
+    const fadeOut2 = 1 - smoothstep(0.111, 0.121, pct);
     const a2 = fadeIn2 * fadeOut2;
 
     if (a2 > 0.01) {
@@ -544,10 +544,10 @@ function drawIntroFrames() {
     }
   }
 
-  // FRAME 3: TRANSITION — pct 0.10 to 0.14
-  if (pct >= 0.095 && pct < 0.145) {
-    const fadeIn3 = smoothstep(0.10, 0.103, pct);
-    const fadeOut3 = 1 - smoothstep(0.13, 0.14, pct);
+  // FRAME 3: TRANSITION — pct 0.121 to 0.161
+  if (pct >= 0.116 && pct < 0.166) {
+    const fadeIn3 = smoothstep(0.121, 0.124, pct);
+    const fadeOut3 = 1 - smoothstep(0.151, 0.161, pct);
     const a3 = fadeIn3 * fadeOut3;
 
     if (a3 > 0.01) {
@@ -572,8 +572,8 @@ function drawIntroFrames() {
 //  MAIN CHART
 // ============================================================
 function currentYear() {
-  // Chart draws during pct 0.14–0.88
-  const chartPct = Math.max(0, Math.min(1, (pct - 0.14) / 0.74));
+  // Chart draws during pct 0.161–0.80
+  const chartPct = Math.max(0, Math.min(1, (pct - 0.161) / 0.639));
   return 2004 + chartPct * 22;
 }
 
@@ -581,11 +581,11 @@ function drawChart() {
   ctx.fillStyle = '#08090f';
   ctx.fillRect(0, 0, W, H);
 
-  if (pct < 0.135) return; // not in chart phase yet
+  if (pct < 0.156) return; // not in chart phase yet
 
-  const fadeIn = smoothstep(0.135, 0.15, pct);
+  const fadeIn = smoothstep(0.156, 0.17, pct);
   // Fade everything out when closing begins so "You're still here" gets a clean screen
-  const closingDim = 1 - smoothstep(0.88, 0.92, pct);
+  const closingDim = 1 - smoothstep(0.80, 0.84, pct);
   const vis = fadeIn * closingDim; // master visibility for chart elements
   const curYear = currentYear();
   const curFrac = yearToFrac(curYear);
@@ -691,7 +691,7 @@ function drawChart() {
   ctx.stroke();
 
   // --- CURSOR + DOTS ---
-  if (curFrac > 0.005 && pct < 0.90) {
+  if (curFrac > 0.005 && pct < 0.83) {
     const cx = chartX(curFrac);
     ctx.globalAlpha = vis * 0.12;
     ctx.beginPath();
@@ -736,7 +736,7 @@ function drawChart() {
   }
 
   // --- LEGEND (top of page) ---
-  if (pct > 0.14) {
+  if (pct > 0.161) {
     const spotDim = spotlight.active ? 0.3 : 1;
     const mob = isMobile();
 
@@ -907,9 +907,9 @@ function drawChart() {
     }
   }
 
-  // --- CLOSING FRAME 1: "You're still here" (pct 0.89 → 0.96) ---
-  if (pct > 0.88 && pct < 0.965) {
-    const c1In = smoothstep(0.89, 0.90, pct);
+  // --- CLOSING FRAME 1: "You're still here" (pct 0.82 → 0.96) ---
+  if (pct > 0.81 && pct < 0.965) {
+    const c1In = smoothstep(0.82, 0.83, pct);
     const c1Out = 1 - smoothstep(0.945, 0.96, pct);
     const c1 = c1In * c1Out;
     if (c1 > 0.01) {
@@ -1090,7 +1090,7 @@ function loop(now) {
   document.getElementById('progress-bar').style.width = (pct*100)+'%';
 
   // Decide what to render based on phase
-  if (pct < 0.135) {
+  if (pct < 0.156) {
     drawIntroFrames();
   } else {
     drawChart();
