@@ -306,16 +306,16 @@ const T0 = Date.now();
 let pct = 0, frame = 0;
 
 let progress = 0, isPlaying = false;
-const DURATION = 70; // seconds total (excluding spotlight pauses)
+const DURATION = 45; // seconds total (excluding spotlight pauses)
 const SPEED = 1 / (DURATION * 60);
 
 // ============================================================
-//  TIMELINE PHASES (70s base + ~33s spotlight pauses ≈ 103s total)
+//  TIMELINE PHASES (45s base + ~27s spotlight pauses ≈ 72s total)
 //  0.00–0.01  Opening counters (HTML overlay)
-//  0.01–0.03  Intro Frame 1: YOUR ATTENTION (~2s)
-//  0.03–0.134 Intro Frame 2: THE MACHINES (~7s)
-//  0.134–0.174 Transition: "Here is what happened." (~3s)
-//  0.174–0.88  Chart draws with spotlight pauses
+//  0.01–0.03  Intro Frame 1: YOUR ATTENTION (~1s)
+//  0.03–0.10  Intro Frame 2: THE MACHINES (~5s)
+//  0.10–0.14  Transition: "Here is what happened." (~2s)
+//  0.14–0.88  Chart draws with spotlight pauses
 //  0.89–0.93  Closing 1: "You're still here"
 //  0.94–1.00  Closing 2: Narrative payoff + credits
 // ============================================================
@@ -488,10 +488,10 @@ function drawIntroFrames() {
     }
   }
 
-  // FRAME 2: THE MACHINES (cyan) — pct 0.03 to 0.134 (trimmed 20%)
-  if (pct >= 0.025 && pct < 0.14) {
+  // FRAME 2: THE MACHINES (cyan) — pct 0.03 to 0.10 (~5s at 45s base)
+  if (pct >= 0.025 && pct < 0.105) {
     const fadeIn2 = smoothstep(0.03, 0.033, pct);
-    const fadeOut2 = 1 - smoothstep(0.124, 0.134, pct);
+    const fadeOut2 = 1 - smoothstep(0.09, 0.10, pct);
     const a2 = fadeIn2 * fadeOut2;
 
     if (a2 > 0.01) {
@@ -541,10 +541,10 @@ function drawIntroFrames() {
     }
   }
 
-  // FRAME 3: TRANSITION — pct 0.134 to 0.174
-  if (pct >= 0.13 && pct < 0.18) {
-    const fadeIn3 = smoothstep(0.134, 0.137, pct);
-    const fadeOut3 = 1 - smoothstep(0.164, 0.174, pct);
+  // FRAME 3: TRANSITION — pct 0.10 to 0.14
+  if (pct >= 0.095 && pct < 0.145) {
+    const fadeIn3 = smoothstep(0.10, 0.103, pct);
+    const fadeOut3 = 1 - smoothstep(0.13, 0.14, pct);
     const a3 = fadeIn3 * fadeOut3;
 
     if (a3 > 0.01) {
@@ -569,8 +569,8 @@ function drawIntroFrames() {
 //  MAIN CHART
 // ============================================================
 function currentYear() {
-  // Chart draws during pct 0.174–0.88
-  const chartPct = Math.max(0, Math.min(1, (pct - 0.174) / 0.706));
+  // Chart draws during pct 0.14–0.88
+  const chartPct = Math.max(0, Math.min(1, (pct - 0.14) / 0.74));
   return 2004 + chartPct * 22;
 }
 
@@ -578,9 +578,9 @@ function drawChart() {
   ctx.fillStyle = '#08090f';
   ctx.fillRect(0, 0, W, H);
 
-  if (pct < 0.17) return; // not in chart phase yet
+  if (pct < 0.135) return; // not in chart phase yet
 
-  const fadeIn = smoothstep(0.17, 0.185, pct);
+  const fadeIn = smoothstep(0.135, 0.15, pct);
   // Fade everything out when closing begins so "You're still here" gets a clean screen
   const closingDim = 1 - smoothstep(0.88, 0.92, pct);
   const vis = fadeIn * closingDim; // master visibility for chart elements
@@ -733,7 +733,7 @@ function drawChart() {
   }
 
   // --- LEGEND (top of page) ---
-  if (pct > 0.174) {
+  if (pct > 0.14) {
     const spotDim = spotlight.active ? 0.3 : 1;
     const mob = isMobile();
 
@@ -1001,9 +1001,9 @@ const spotlight = {
 };
 
 const SPOTLIGHT_HOLD = {
-  'human': 3.0,    // seconds for human annotations
-  'tech': 3.0,     // seconds for tech annotations
-  'cross': 4.0,    // longer for crossover moments
+  'human': 2.5,    // seconds for human annotations
+  'tech': 2.5,     // seconds for tech annotations
+  'cross': 3.0,    // longer for crossover moments
 };
 
 function checkSpotlight() {
@@ -1074,7 +1074,7 @@ function loop(now) {
   document.getElementById('progress-bar').style.width = (pct*100)+'%';
 
   // Decide what to render based on phase
-  if (pct < 0.17) {
+  if (pct < 0.135) {
     drawIntroFrames();
   } else {
     drawChart();
