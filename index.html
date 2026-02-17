@@ -467,10 +467,10 @@ function drawIntroFrames() {
       ctx.fillStyle = '#f59e0b';
       ctx.fillText('2:30', W/2, H * 0.66);
 
-      // Number context — Playfair italic
-      ctx.globalAlpha = a1 * 0.6;
-      ctx.font = `italic 400 ${m ? Math.max(15, W*0.038) : Math.max(22, W*0.024)}px 'Playfair Display', serif`;
-      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      // Number context
+      ctx.globalAlpha = a1 * 0.7;
+      ctx.font = `italic 400 ${m ? Math.max(17, W*0.045) : Math.max(22, W*0.024)}px 'Playfair Display', serif`;
+      ctx.fillStyle = 'rgba(255,255,255,0.8)';
       ctx.fillText('That was 2004. Gloria Mark, UC Irvine.', W/2, H * 0.78, W - 40);
     }
   }
@@ -508,10 +508,10 @@ function drawIntroFrames() {
       ctx.fillStyle = '#06b6d4';
       ctx.fillText('5%', W/2, H * 0.66);
 
-      // Number context — Playfair italic
-      ctx.globalAlpha = a2 * 0.6;
-      ctx.font = `italic 400 ${m ? Math.max(15, W*0.038) : Math.max(22, W*0.024)}px 'Playfair Display', serif`;
-      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      // Number context
+      ctx.globalAlpha = a2 * 0.7;
+      ctx.font = `italic 400 ${m ? Math.max(17, W*0.045) : Math.max(22, W*0.024)}px 'Playfair Display', serif`;
+      ctx.fillStyle = 'rgba(255,255,255,0.8)';
       ctx.fillText('That was 2004. Barely a blip.', W/2, H * 0.78, W - 40);
     }
   }
@@ -525,9 +525,10 @@ function drawIntroFrames() {
     if (a3 > 0.01) {
       ctx.textAlign = 'center';
       ctx.globalAlpha = a3;
-      ctx.font = `italic 400 ${Math.max(40, W * 0.048)}px 'Playfair Display', serif`;
+      const transSz = isMobile() ? Math.max(24, W * 0.065) : Math.max(40, W * 0.048);
+      ctx.font = `italic 400 ${transSz}px 'Playfair Display', serif`;
       ctx.fillStyle = 'rgba(255,255,255,0.9)';
-      ctx.fillText('Here is what happened next.', W/2, H * 0.48);
+      ctx.fillText('Here is what happened next.', W/2, H * 0.48, W - 40);
     }
   }
 
@@ -855,9 +856,9 @@ function drawChart() {
       ctx.fillText(title, W / 2, innerTop + zone * 1.5 + 14, cardW - 40);
 
       // Detail — zone 3
-      ctx.globalAlpha = cardAlpha * 0.7;
-      ctx.font = `italic 400 ${mob ? Math.max(13, W*0.035) : Math.max(16, W*0.017)}px 'Playfair Display', serif`;
-      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.globalAlpha = cardAlpha * 0.9;
+      ctx.font = `400 ${mob ? Math.max(15, W*0.04) : Math.max(17, W*0.018)}px Inter`;
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
       ctx.fillText(detail, W / 2, innerTop + zone * 2.5 + 6, cardW - 40);
     }
   }
@@ -900,33 +901,44 @@ function drawChart() {
       ctx.textAlign = 'center';
 
       // "Then → Now" contrast
+      const m2 = isMobile();
       ctx.globalAlpha = c2 * 0.7;
-      ctx.font = `italic 400 ${Math.max(22, W*0.024)}px 'Playfair Display', serif`;
+      ctx.font = `italic 400 ${m2 ? Math.max(16, W*0.042) : Math.max(22, W*0.024)}px 'Playfair Display', serif`;
       ctx.fillStyle = 'rgba(255,255,255,0.7)';
-      ctx.fillText('2004: You had 2:30 of focus. The machines had 5%.', W/2, H * 0.30);
+      if (m2) {
+        ctx.fillText('2004: You had 2:30 of focus.', W/2, H * 0.24, W - 40);
+        ctx.fillText('The machines had 5%.', W/2, H * 0.30, W - 40);
+      } else {
+        ctx.fillText('2004: You had 2:30 of focus. The machines had 5%.', W/2, H * 0.30);
+      }
 
       ctx.globalAlpha = c2;
-      ctx.font = `italic 400 ${Math.max(28, W*0.032)}px 'Playfair Display', serif`;
+      ctx.font = `italic 400 ${m2 ? Math.max(17, W*0.045) : Math.max(28, W*0.032)}px 'Playfair Display', serif`;
       ctx.fillStyle = 'rgba(255,255,255,0.95)';
-      ctx.fillText('2024: Your focus is 47 seconds. They own 51%.', W/2, H * 0.44);
+      if (m2) {
+        ctx.fillText('2024: Your focus is 47 seconds.', W/2, H * 0.40, W - 40);
+        ctx.fillText('They own 51%.', W/2, H * 0.46, W - 40);
+      } else {
+        ctx.fillText('2024: Your focus is 47 seconds. They own 51%.', W/2, H * 0.44);
+      }
 
       // The thesis — purple, bold
       const thesisAlpha = smoothstep(0.98, 0.99, pct);
       ctx.globalAlpha = thesisAlpha;
-      ctx.font = `800 ${Math.max(26, W*0.03)}px Inter`;
+      ctx.font = `800 ${m2 ? Math.max(22, W*0.06) : Math.max(26, W*0.03)}px Inter`;
       ctx.fillStyle = '#a78bfa';
-      ctx.fillText('The lines have crossed.', W/2, H * 0.62);
+      ctx.fillText('The lines have crossed.', W/2, H * 0.60, W - 40);
       ctx.globalAlpha = thesisAlpha * 0.8;
-      ctx.font = `italic 400 ${Math.max(20, W*0.022)}px 'Playfair Display', serif`;
+      ctx.font = `italic 400 ${m2 ? Math.max(16, W*0.042) : Math.max(20, W*0.022)}px 'Playfair Display', serif`;
       ctx.fillStyle = 'rgba(255,255,255,0.7)';
-      ctx.fillText('The question is what happens next.', W/2, H * 0.72);
+      ctx.fillText('The question is what happens next.', W/2, H * 0.70, W - 40);
 
       // CTA — appears last
       const ctaAlpha = smoothstep(0.993, 1.0, pct);
       ctx.globalAlpha = ctaAlpha * 0.55;
-      ctx.font = `500 ${Math.max(15, W*0.015)}px Inter`;
+      ctx.font = `500 ${m2 ? Math.max(13, W*0.035) : Math.max(15, W*0.015)}px Inter`;
       ctx.fillStyle = 'rgba(255,255,255,0.5)';
-      ctx.fillText('Close this tab. Do nothing for 60 seconds.', W/2, H * 0.84);
+      ctx.fillText('Close this tab. Do nothing for 60 seconds.', W/2, H * 0.82, W - 40);
     }
   }
 
