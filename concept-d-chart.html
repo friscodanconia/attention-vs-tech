@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Crossover — Attention vs Technology</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #08090f;
+    --amber: #f59e0b;
+    --coral: #f97316;
+    --cyan: #06b6d4;
+    --blue: #3b82f6;
+    --purple: #8b5cf6;
+  }
+
+  html, body {
+    background: var(--bg);
+    color: #e2e8f0;
+    font-family: 'Inter', -apple-system, sans-serif;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: 1;
+  }
+
+  /* === OPENING === */
+  #opening {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.4s ease;
+    padding: 20px;
+    pointer-events: auto;
+    background: var(--bg);
+  }
+  #opening.hidden { opacity: 0; pointer-events: none; }
+
+  .counter-label {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.4rem, 2.8vw, 2rem);
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 2.5rem;
+    font-style: italic;
+  }
+  .counter-row {
+    display: flex; align-items: baseline; gap: 0.8rem;
+    margin-bottom: 1rem;
+    opacity: 0; transform: translateY(12px);
+    animation: fadeUp 0.7s ease forwards;
+  }
+  .counter-row:nth-child(2) { animation-delay: 0.4s; }
+  .counter-row:nth-child(3) { animation-delay: 0.8s; }
+  .counter-row:nth-child(4) { animation-delay: 1.2s; }
+  .counter-row:nth-child(5) { animation-delay: 2.2s; }
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+  .counter-num {
+    font-family: 'Inter', monospace;
+    font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+    font-weight: 600; color: var(--cyan);
+    min-width: 160px; text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .counter-desc { font-size: clamp(0.95rem, 1.8vw, 1.2rem); color: rgba(255,255,255,0.45); }
+  .time-on-page {
+    margin-top: 2rem; font-size: clamp(1.1rem, 2vw, 1.4rem);
+    color: rgba(255,255,255,0.55); text-align: center;
+  }
+  .time-on-page span { color: var(--amber); font-weight: 600; }
+  .opening-coda {
+    margin-top: 2.5rem;
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-style: italic; color: rgba(255,255,255,0.7);
+    text-align: center; max-width: 600px;
+    opacity: 0; animation: fadeUp 0.8s ease 3s forwards;
+  }
+
+  /* === SCROLL HINT === */
+  #scroll-hint {
+    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+    z-index: 55; color: #f59e0b; font-size: 1.05rem;
+    font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    transition: opacity 0.6s; pointer-events: auto;
+  }
+  .scroll-arrow {
+    width: 1px; height: 24px;
+    background: linear-gradient(to bottom, rgba(245,158,11,0.6), transparent);
+    animation: breathe 2s ease infinite;
+  }
+  @keyframes breathe { 0%,100% { opacity: 0.3; } 50% { opacity: 0.8; } }
+
+  /* === PROGRESS === */
+  #progress-bar {
+    position: fixed; top: 0; left: 0; height: 2px;
+    background: linear-gradient(90deg, var(--amber), var(--purple), var(--cyan));
+    z-index: 100; width: 0%;
+  }
+
+  /* === CREDITS === */
+  #credits-container {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 200; background: var(--bg); display: none; overflow: hidden;
+  }
+  #credits-scroll {
+    position: absolute; left: 50%; transform: translateX(-50%);
+    width: 90%; max-width: 660px; text-align: center;
+  }
+  #credits-scroll h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+    font-weight: 400; color: rgba(255,255,255,0.75); margin-bottom: 2rem;
+  }
+  .credit-line {
+    font-size: clamp(0.85rem, 1.4vw, 1.05rem);
+    color: rgba(255,255,255,0.55); line-height: 1.8; margin-bottom: 0.4rem;
+  }
+  .credit-line em { color: rgba(255,255,255,0.35); }
+  .credit-divider { width: 30px; height: 1px; background: rgba(255,255,255,0.1); margin: 1.5rem auto; }
+  .credit-note {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    font-style: italic; color: rgba(255,255,255,0.3);
+    margin-top: 2rem; margin-bottom: 4rem; line-height: 1.6;
+  }
+
+  @media (max-width: 680px) {
+    .counter-num { min-width: 90px; }
+    .counter-row { flex-wrap: wrap; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<canvas id="chart"></canvas>
+
+<div id="opening">
+  <div class="counter-label">Since you opened this page...</div>
+  <div class="counter-row"><span class="counter-num" id="c-emails">0</span><span class="counter-desc">emails sent worldwide</span></div>
+  <div class="counter-row"><span class="counter-num" id="c-youtube">0</span><span class="counter-desc">hours uploaded to YouTube</span></div>
+  <div class="counter-row"><span class="counter-num" id="c-ai">0</span><span class="counter-desc">AI articles published</span></div>
+  <div class="counter-row time-on-page">You've been here <span id="c-seconds">0</span> seconds. Most people leave by 3.</div>
+  <div class="opening-coda">But this is worth staying for.</div>
+</div>
+
+<div id="scroll-hint">
+  <span>Scroll to begin</span>
+  <div class="scroll-arrow"></div>
+</div>
+
+<div id="credits-container">
+  <div id="credits-scroll">
+    <h2>Sources &amp; Citations</h2>
+    <div class="credit-line">Gloria Mark, <em>Attention Span</em> (2023) — UC Irvine</div>
+    <div class="credit-divider"></div>
+    <div class="credit-line">Ward, Duke, Gneezy &amp; Bos — <em>J. Assoc. Consumer Research</em> (2017)</div>
+    <div class="credit-divider"></div>
+    <div class="credit-line">Imperva Bad Bot Report (2024) — 51% bot traffic</div>
+    <div class="credit-divider"></div>
+    <div class="credit-line">Originality.ai / Graphite.io (2024) — 50.3% AI-generated articles</div>
+    <div class="credit-divider"></div>
+    <div class="credit-line">OpenAI — GPT-1 through GPT-3 parameter growth (2018–2020)</div>
+    <div class="credit-divider"></div>
+    <div class="credit-line">eMarketer / IAB (2016) — Digital ads surpass TV</div>
+    <div class="credit-divider"></div>
+    <div class="credit-line">Pew Research Center (2018) — Social media surpasses print news</div>
+    <div class="credit-divider"></div>
+    <div class="credit-line">Gallup (2022) — 12.6 books/year, lowest tracked</div>
+    <div class="credit-divider"></div>
+    <div class="credit-line">Netflix Engineering (2022) — 136M Skip Intro presses/day</div>
+    <div class="credit-divider"></div>
+    <div class="credit-line">Cutting et al., Cornell — Film shot length, <em>Psych. Science</em> (2010)</div>
+    <div class="credit-divider"></div>
+    <div class="credit-line">Common Sense Media (2023) — 181 notifications/day, Gen Z</div>
+    <div class="credit-divider"></div>
+    <div class="credit-line">Radicati Group — 347B emails/day; WhatsApp — 150B msgs/day</div>
+    <div class="credit-divider"></div>
+    <div class="credit-line">Europol Innovation Lab (2022) — 90% synthetic projection for 2026</div>
+    <div class="credit-divider"></div>
+    <div class="credit-line">BLS American Time Use Survey — Reading for pleasure decline</div>
+    <div class="credit-note">
+      Every number is sourced and verifiable.<br>
+      The only thing we made up is the idea that anyone would read this far.
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+'use strict';
+
+const canvas = document.getElementById('chart');
+const ctx = canvas.getContext('2d');
+let W, H, dpr;
+const T0 = Date.now();
+let pct = 0, frame = 0;
+
+let progress = 0, isPlaying = false;
+const DURATION = 70; // seconds total (excluding spotlight pauses)
+const SPEED = 1 / (DURATION * 60);
+
+// ============================================================
+//  TIMELINE PHASES (70s base + ~33s spotlight pauses ≈ 103s total)
+//  0.00–0.01  Opening counters (HTML overlay)
+//  0.01–0.03  Intro Frame 1: YOUR ATTENTION (~2s)
+//  0.03–0.16  Intro Frame 2: THE MACHINES (~9s — intentionally long)
+//  0.16–0.20  Transition: "Here is what happened." (~3s)
+//  0.20–0.88  Chart draws with spotlight pauses
+//  0.89–0.93  Closing 1: "You're still here"
+//  0.94–1.00  Closing 2: Narrative payoff + credits
+// ============================================================
+
+function startPlay() {
+  if (isPlaying) return;
+  isPlaying = true;
+  progress = 0.015; // jump right into Frame 1 fade-in
+  document.getElementById('scroll-hint').style.opacity = '0';
+  document.getElementById('opening').classList.add('hidden');
+}
+window.addEventListener('wheel', startPlay, { once: true, passive: true });
+window.addEventListener('touchstart', startPlay, { once: true, passive: true });
+window.addEventListener('click', startPlay, { once: true });
+
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+resize();
+window.addEventListener('resize', resize);
+
+// Counters
+const EPS = 4_016_203, YPS = 500/60, APS = 12;
+function tickCounters() {
+  const t = (Date.now()-T0)/1000;
+  const ce = document.getElementById('c-emails');
+  const cy = document.getElementById('c-youtube');
+  const ca = document.getElementById('c-ai');
+  const cs = document.getElementById('c-seconds');
+  if (ce) ce.textContent = Math.floor(t*EPS).toLocaleString();
+  if (cy) cy.textContent = Math.floor(t*YPS).toLocaleString();
+  if (ca) ca.textContent = Math.floor(t*APS).toLocaleString();
+  if (cs) cs.textContent = Math.floor(t);
+}
+setInterval(tickCounters, 80);
+
+// ============================================================
+//  CHART GEOMETRY — generous margins so nothing bleeds
+// ============================================================
+const MARGIN = { top: 100, right: 80, bottom: 90, left: 80 };
+function chartX(yearFrac) {
+  return MARGIN.left + yearFrac * (W - MARGIN.left - MARGIN.right);
+}
+function chartY(val) {
+  return MARGIN.top + (1 - val) * (H - MARGIN.top - MARGIN.bottom);
+}
+function yearToFrac(y) { return (y - 2004) / (2026 - 2004); }
+
+// ============================================================
+//  DATA CURVES
+// ============================================================
+const humanPts = [
+  [2004, 1.0], [2007, 0.90], [2010, 0.70], [2012, 0.50],
+  [2014, 0.45], [2016, 0.40], [2018, 0.37], [2020, 0.33],
+  [2022, 0.31], [2024, 0.30], [2026, 0.28],
+];
+const techPts = [
+  [2004, 0.05], [2007, 0.10], [2010, 0.15], [2012, 0.20],
+  [2014, 0.25], [2016, 0.35], [2018, 0.42], [2020, 0.55],
+  [2022, 0.65], [2024, 0.82], [2026, 0.95],
+];
+
+function interpCurve(pts, year) {
+  if (year <= pts[0][0]) return pts[0][1];
+  if (year >= pts[pts.length-1][0]) return pts[pts.length-1][1];
+  for (let i = 0; i < pts.length - 1; i++) {
+    if (year >= pts[i][0] && year <= pts[i+1][0]) {
+      const t = (year - pts[i][0]) / (pts[i+1][0] - pts[i][0]);
+      const s = t * t * (3 - 2 * t);
+      return pts[i][1] + (pts[i+1][1] - pts[i][1]) * s;
+    }
+  }
+  return pts[pts.length-1][1];
+}
+
+// ============================================================
+//  ANNOTATIONS
+// ============================================================
+const annotations = [
+  [2004, 'human', '2:30', 'Gloria Mark measures focus time'],
+  [2007, 'tech', 'iPhone', 'A glass rectangle changes everything'],
+  [2009, 'human', '3 seconds', '40% abandon a page after 3 sec — Akamai'],
+  [2012, 'human', '1:15', 'Focus halved. 25 min to recover.'],
+  [2016, 'cross', 'THE CROSSOVER', 'Digital ads surpass TV — $72.5B vs $71.3B'],
+  [2017, 'human', 'Brain Drain', 'Phone on desk (off) reduces cognition'],
+  [2018, 'tech', 'GPT-1', '117M parameters — a bathtub of sand'],
+  [2020, 'tech', 'GPT-3', '175B params — 1,500x in 2 years'],
+  [2022, 'human', '0:47', '47 seconds of focus — down 70% since 2004'],
+  [2024, 'cross', 'THE TAKEOVER', 'Bots outnumber humans. Half of articles are AI.'],
+  [2026, 'cross', 'NOW', 'Projected: 90% of content is synthetic'],
+];
+
+// ============================================================
+//  DRAW HELPERS
+// ============================================================
+function smoothstep(a, b, x) {
+  const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
+  return t * t * (3 - 2 * t);
+}
+
+// ============================================================
+//  INTRO FRAMES (canvas-rendered, between opening and chart)
+// ============================================================
+function drawIntroFrames() {
+  ctx.fillStyle = '#08090f';
+  ctx.fillRect(0, 0, W, H);
+
+  // FRAME 1: YOUR ATTENTION (amber) — pct 0.01 to 0.03 (~3 seconds)
+  if (pct >= 0.01 && pct < 0.035) {
+    const fadeIn1 = smoothstep(0.01, 0.013, pct);
+    const fadeOut1 = 1 - smoothstep(0.025, 0.033, pct);
+    const a1 = fadeIn1 * fadeOut1;
+
+    if (a1 > 0.01) {
+      ctx.textAlign = 'center';
+
+      // Title
+      ctx.globalAlpha = a1 * 0.9;
+      ctx.font = `800 ${Math.max(42, W * 0.05)}px Inter`;
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillText('YOUR ATTENTION', W/2, H * 0.28);
+
+      // Amber line accent under title
+      ctx.globalAlpha = a1 * 0.5;
+      ctx.fillRect(W/2 - 50, H * 0.30, 100, 2);
+
+      // Description — Playfair italic for consistency
+      ctx.globalAlpha = a1 * 0.8;
+      ctx.font = `italic 400 ${Math.max(24, W * 0.026)}px 'Playfair Display', serif`;
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      ctx.fillText('How long you can focus on a single screen', W/2, H * 0.37);
+      ctx.fillText('before your mind switches to something else.', W/2, H * 0.37 + Math.max(36, W * 0.035));
+
+      // THE NUMBER — biggest thing on screen, the hero
+      ctx.globalAlpha = a1;
+      ctx.font = `800 ${Math.max(80, W * 0.1)}px Inter`;
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillText('2:30', W/2, H * 0.66);
+
+      // Number context — Playfair italic
+      ctx.globalAlpha = a1 * 0.6;
+      ctx.font = `italic 400 ${Math.max(22, W * 0.024)}px 'Playfair Display', serif`;
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.fillText('That was 2004. Gloria Mark, UC Irvine.', W/2, H * 0.78);
+    }
+  }
+
+  // FRAME 2: THE MACHINES (cyan) — pct 0.03 to 0.16 (much longer hold)
+  if (pct >= 0.025 && pct < 0.165) {
+    const fadeIn2 = smoothstep(0.03, 0.033, pct);
+    const fadeOut2 = 1 - smoothstep(0.15, 0.16, pct);
+    const a2 = fadeIn2 * fadeOut2;
+
+    if (a2 > 0.01) {
+      ctx.textAlign = 'center';
+
+      // Title
+      ctx.globalAlpha = a2 * 0.9;
+      ctx.font = `800 ${Math.max(42, W * 0.05)}px Inter`;
+      ctx.fillStyle = '#06b6d4';
+      ctx.fillText('THE MACHINES', W/2, H * 0.28);
+
+      // Cyan line accent under title
+      ctx.globalAlpha = a2 * 0.5;
+      ctx.fillRect(W/2 - 50, H * 0.30, 100, 2);
+
+      // Description — Playfair italic
+      ctx.globalAlpha = a2 * 0.8;
+      ctx.font = `italic 400 ${Math.max(24, W * 0.026)}px 'Playfair Display', serif`;
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      ctx.fillText('Bots, AI content, automated decisions.', W/2, H * 0.37);
+      ctx.fillText('The share of the internet that isn\'t human.', W/2, H * 0.37 + Math.max(36, W * 0.035));
+
+      // THE NUMBER — biggest thing on screen
+      ctx.globalAlpha = a2;
+      ctx.font = `800 ${Math.max(80, W * 0.1)}px Inter`;
+      ctx.fillStyle = '#06b6d4';
+      ctx.fillText('5%', W/2, H * 0.66);
+
+      // Number context — Playfair italic
+      ctx.globalAlpha = a2 * 0.6;
+      ctx.font = `italic 400 ${Math.max(22, W * 0.024)}px 'Playfair Display', serif`;
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.fillText('That was 2004. Barely a blip.', W/2, H * 0.78);
+    }
+  }
+
+  // FRAME 3: TRANSITION — pct 0.16 to 0.20
+  if (pct >= 0.155 && pct < 0.205) {
+    const fadeIn3 = smoothstep(0.16, 0.163, pct);
+    const fadeOut3 = 1 - smoothstep(0.19, 0.20, pct);
+    const a3 = fadeIn3 * fadeOut3;
+
+    if (a3 > 0.01) {
+      ctx.textAlign = 'center';
+      ctx.globalAlpha = a3;
+      ctx.font = `italic 400 ${Math.max(40, W * 0.048)}px 'Playfair Display', serif`;
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.fillText('Here is what happened next.', W/2, H * 0.48);
+    }
+  }
+
+  ctx.globalAlpha = 1;
+}
+
+// ============================================================
+//  MAIN CHART
+// ============================================================
+function currentYear() {
+  // Chart draws during pct 0.20–0.88
+  const chartPct = Math.max(0, Math.min(1, (pct - 0.20) / 0.68));
+  return 2004 + chartPct * 22;
+}
+
+function drawChart() {
+  ctx.fillStyle = '#08090f';
+  ctx.fillRect(0, 0, W, H);
+
+  if (pct < 0.195) return; // not in chart phase yet
+
+  const fadeIn = smoothstep(0.195, 0.21, pct);
+  // Fade everything out when closing begins so "You're still here" gets a clean screen
+  const closingDim = 1 - smoothstep(0.88, 0.92, pct);
+  const vis = fadeIn * closingDim; // master visibility for chart elements
+  const curYear = currentYear();
+  const curFrac = yearToFrac(curYear);
+
+  // --- X-axis: year labels ---
+  ctx.textAlign = 'center';
+  const labelYears = [2004, 2008, 2012, 2016, 2020, 2024, 2026];
+  const axisY = H - MARGIN.bottom + 30;
+  for (const y of labelYears) {
+    const f = yearToFrac(y);
+    if (f > curFrac + 0.01) continue;
+    const x = chartX(f);
+    const isCurrent = Math.abs(curYear - y) < 1.2;
+    ctx.globalAlpha = isCurrent ? vis * 1.0 : vis * 0.5;
+    ctx.font = isCurrent
+      ? `800 ${Math.max(20, W * 0.024)}px Inter`
+      : `600 ${Math.max(16, W * 0.017)}px Inter`;
+    ctx.fillStyle = isCurrent ? '#fff' : 'rgba(255,255,255,0.65)';
+    ctx.fillText(y, x, axisY);
+
+    // Subtle grid
+    ctx.globalAlpha = vis * 0.04;
+    ctx.beginPath();
+    ctx.moveTo(x, MARGIN.top);
+    ctx.lineTo(x, H - MARGIN.bottom);
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+
+    // Tick
+    ctx.globalAlpha = vis * 0.5;
+    ctx.beginPath();
+    ctx.moveTo(x, H - MARGIN.bottom);
+    ctx.lineTo(x, H - MARGIN.bottom + 8);
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  // Axis line
+  ctx.globalAlpha = vis * 0.35;
+  ctx.beginPath();
+  ctx.moveTo(MARGIN.left, H - MARGIN.bottom);
+  ctx.lineTo(W - MARGIN.right, H - MARGIN.bottom);
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // --- AREA FILLS ---
+  const steps = Math.max(2, Math.floor(curFrac * 300));
+
+  // Human fill (warm, from top)
+  ctx.globalAlpha = vis * 0.12;
+  ctx.beginPath();
+  ctx.moveTo(chartX(0), MARGIN.top);
+  for (let i = 0; i <= steps; i++) {
+    const f = Math.min(curFrac, i / 300);
+    ctx.lineTo(chartX(f), chartY(interpCurve(humanPts, 2004 + f * 22)));
+  }
+  ctx.lineTo(chartX(Math.min(curFrac, steps/300)), MARGIN.top);
+  ctx.closePath();
+  const hGrad = ctx.createLinearGradient(0, MARGIN.top, 0, H - MARGIN.bottom);
+  hGrad.addColorStop(0, 'rgba(245,158,11,0.6)');
+  hGrad.addColorStop(1, 'rgba(245,158,11,0)');
+  ctx.fillStyle = hGrad;
+  ctx.fill();
+
+  // Tech fill (cool, from bottom)
+  ctx.globalAlpha = vis * 0.12;
+  ctx.beginPath();
+  ctx.moveTo(chartX(0), H - MARGIN.bottom);
+  for (let i = 0; i <= steps; i++) {
+    const f = Math.min(curFrac, i / 300);
+    ctx.lineTo(chartX(f), chartY(interpCurve(techPts, 2004 + f * 22)));
+  }
+  ctx.lineTo(chartX(Math.min(curFrac, steps/300)), H - MARGIN.bottom);
+  ctx.closePath();
+  const tGrad = ctx.createLinearGradient(0, MARGIN.top, 0, H - MARGIN.bottom);
+  tGrad.addColorStop(0, 'rgba(6,182,212,0)');
+  tGrad.addColorStop(1, 'rgba(6,182,212,0.6)');
+  ctx.fillStyle = tGrad;
+  ctx.fill();
+
+  // --- LINES ---
+  ctx.globalAlpha = vis * 0.9;
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = '#f59e0b';
+  ctx.beginPath();
+  for (let i = 0; i <= steps; i++) {
+    const f = Math.min(curFrac, i / 300);
+    const x = chartX(f), y = chartY(interpCurve(humanPts, 2004 + f * 22));
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  ctx.strokeStyle = '#06b6d4';
+  ctx.beginPath();
+  for (let i = 0; i <= steps; i++) {
+    const f = Math.min(curFrac, i / 300);
+    const x = chartX(f), y = chartY(interpCurve(techPts, 2004 + f * 22));
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  // --- CURSOR + DOTS ---
+  if (curFrac > 0.005 && pct < 0.90) {
+    const cx = chartX(curFrac);
+    ctx.globalAlpha = vis * 0.12;
+    ctx.beginPath();
+    ctx.moveTo(cx, MARGIN.top);
+    ctx.lineTo(cx, H - MARGIN.bottom);
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    const hY = chartY(interpCurve(humanPts, curYear));
+    const tY = chartY(interpCurve(techPts, curYear));
+
+    // Dots
+    ctx.globalAlpha = vis * 0.9;
+    ctx.fillStyle = '#f59e0b';
+    ctx.beginPath(); ctx.arc(cx, hY, 6, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#fef3c7';
+    ctx.beginPath(); ctx.arc(cx, hY, 2.5, 0, Math.PI*2); ctx.fill();
+
+    ctx.fillStyle = '#06b6d4';
+    ctx.beginPath(); ctx.arc(cx, tY, 6, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#cffafe';
+    ctx.beginPath(); ctx.arc(cx, tY, 2.5, 0, Math.PI*2); ctx.fill();
+
+    // Value labels near dots
+    ctx.globalAlpha = vis * 0.9;
+    const humanSec = Math.round(interpCurve(humanPts, curYear) * 150);
+    const humanTime = humanSec >= 60
+      ? Math.floor(humanSec/60) + ':' + String(humanSec%60).padStart(2,'0')
+      : humanSec + 's';
+    ctx.font = `700 ${Math.max(15, W*0.014)}px Inter`;
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#f59e0b';
+    ctx.fillText('Focus: ' + humanTime, cx + 14, hY - 12);
+
+    const techPctVal = Math.round(interpCurve(techPts, curYear) * 100);
+    ctx.fillStyle = '#06b6d4';
+    ctx.fillText('Machine: ' + techPctVal + '%', cx + 14, tY + 22);
+  }
+
+  // --- LEGEND (top of page) ---
+  if (pct > 0.20) {
+    const spotDim = spotlight.active ? 0.3 : 1; // dim legend during spotlight
+    const ly = 32;
+    const sz = Math.max(14, W * 0.013);
+    const subSz = Math.max(11, W * 0.01);
+    ctx.globalAlpha = vis * 0.85 * spotDim;
+    ctx.textAlign = 'left';
+    ctx.font = `700 ${sz}px Inter`;
+    ctx.fillStyle = '#f59e0b';
+    ctx.fillRect(MARGIN.left, ly - 4, 22, 3);
+    ctx.fillText('YOUR ATTENTION SPAN', MARGIN.left + 30, ly);
+    ctx.globalAlpha = vis * 0.5 * spotDim;
+    ctx.font = `400 ${subSz}px Inter`;
+    ctx.fillText('Time on a single screen before switching', MARGIN.left + 30, ly + 16);
+
+    ctx.globalAlpha = vis * 0.85 * spotDim;
+    ctx.textAlign = 'right';
+    ctx.font = `700 ${sz}px Inter`;
+    ctx.fillStyle = '#06b6d4';
+    ctx.fillRect(W - MARGIN.right - 22, ly - 4, 22, 3);
+    ctx.fillText('DIGITAL / AI FOOTPRINT', W - MARGIN.right - 30, ly);
+    ctx.globalAlpha = vis * 0.5 * spotDim;
+    ctx.font = `400 ${subSz}px Inter`;
+    ctx.fillText('Bot traffic, AI content, automated decisions', W - MARGIN.right - 30, ly + 16);
+  }
+
+  // =====================================================
+  //  SPOTLIGHT CARDS — pause, dim chart, show annotation
+  // =====================================================
+  // Small persistent dots for past annotations
+  for (const a of annotations) {
+    const [yr, type] = a;
+    if (curYear < yr + 0.3) continue;
+    const fx = chartX(yearToFrac(yr));
+    let ly;
+    if (type === 'cross') {
+      ly = chartY((interpCurve(humanPts, yr) + interpCurve(techPts, yr)) / 2);
+    } else {
+      const curve = type === 'tech' ? techPts : humanPts;
+      ly = chartY(interpCurve(curve, yr));
+    }
+    const color = type === 'human' ? '#f59e0b' : type === 'tech' ? '#06b6d4' : '#a78bfa';
+    ctx.globalAlpha = vis * 0.5;
+    ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(fx, ly, 3.5, 0, Math.PI*2); ctx.fill();
+  }
+
+  // Active spotlight
+  if (spotlight.active && spotlight.anno) {
+    const [yr, type, title, detail] = spotlight.anno;
+    const t = spotlight.elapsed / spotlight.duration; // 0→1 over hold
+    const cardIn = smoothstep(0, 0.15, t);
+    const cardOut = 1 - smoothstep(0.80, 1.0, t);
+    const cardAlpha = cardIn * cardOut;
+
+    if (cardAlpha > 0.01) {
+      const color = type === 'human' ? '#f59e0b' : type === 'tech' ? '#06b6d4' : '#a78bfa';
+      const fx = chartX(yearToFrac(yr));
+      let dotY;
+      if (type === 'cross') {
+        dotY = chartY((interpCurve(humanPts, yr) + interpCurve(techPts, yr)) / 2);
+      } else {
+        const curve = type === 'tech' ? techPts : humanPts;
+        dotY = chartY(interpCurve(curve, yr));
+      }
+
+      // --- Dim overlay ---
+      ctx.globalAlpha = cardAlpha * 0.55;
+      ctx.fillStyle = '#08090f';
+      ctx.fillRect(0, 0, W, H);
+
+      // --- Vertical accent line at the year ---
+      ctx.globalAlpha = cardAlpha * 0.25;
+      ctx.fillStyle = color;
+      ctx.fillRect(fx - 1, MARGIN.top, 2, H - MARGIN.top - MARGIN.bottom);
+
+      // --- Pulsing dot on the line ---
+      const pulse = 1 + Math.sin(t * Math.PI * 4) * 0.3;
+      ctx.globalAlpha = cardAlpha * 0.9;
+      ctx.fillStyle = color;
+      ctx.beginPath(); ctx.arc(fx, dotY, 6 * pulse, 0, Math.PI*2); ctx.fill();
+
+      // --- The Spotlight Card (centered on screen) ---
+      const cardW = Math.min(580, W * 0.55);
+      const cardH = 240;
+      const cardX = (W - cardW) / 2;
+      const cardCY = H * 0.48;
+      const cardTop = cardCY - cardH / 2;
+      const r = 12;
+
+      // Card background — frosted dark
+      ctx.globalAlpha = cardAlpha * 0.92;
+      ctx.fillStyle = 'rgba(12,13,22,0.95)';
+      ctx.beginPath();
+      ctx.moveTo(cardX + r, cardTop);
+      ctx.lineTo(cardX + cardW - r, cardTop);
+      ctx.quadraticCurveTo(cardX + cardW, cardTop, cardX + cardW, cardTop + r);
+      ctx.lineTo(cardX + cardW, cardTop + cardH - r);
+      ctx.quadraticCurveTo(cardX + cardW, cardTop + cardH, cardX + cardW - r, cardTop + cardH);
+      ctx.lineTo(cardX + r, cardTop + cardH);
+      ctx.quadraticCurveTo(cardX, cardTop + cardH, cardX, cardTop + cardH - r);
+      ctx.lineTo(cardX, cardTop + r);
+      ctx.quadraticCurveTo(cardX, cardTop, cardX + r, cardTop);
+      ctx.closePath();
+      ctx.fill();
+
+      // Top accent bar (colored line at top of card)
+      ctx.fillStyle = color;
+      ctx.globalAlpha = cardAlpha * 0.8;
+      ctx.fillRect(cardX + 24, cardTop + 1, cardW - 48, 2.5);
+
+      // Three rows equally spaced inside card
+      // Card inner area: cardTop+30 to cardTop+cardH-20 = 190px usable
+      // Three items → split into 3 equal zones of ~63px, text centered in each
+      const innerTop = cardTop + 30;
+      const innerH = cardH - 50;
+      const zone = innerH / 3;
+
+      ctx.textAlign = 'center';
+
+      // Year — zone 1
+      ctx.globalAlpha = cardAlpha * 0.8;
+      ctx.font = `800 ${Math.max(28, W * 0.03)}px Inter`;
+      ctx.fillStyle = color;
+      ctx.fillText(yr, W / 2, innerTop + zone * 0.5 + 10);
+
+      // Title — zone 2
+      ctx.globalAlpha = cardAlpha;
+      ctx.font = `800 ${Math.max(40, W * 0.045)}px Inter`;
+      ctx.fillStyle = '#fff';
+      ctx.fillText(title, W / 2, innerTop + zone * 1.5 + 14);
+
+      // Detail — zone 3
+      ctx.globalAlpha = cardAlpha * 0.7;
+      ctx.font = `italic 400 ${Math.max(16, W * 0.017)}px 'Playfair Display', serif`;
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.fillText(detail, W / 2, innerTop + zone * 2.5 + 6);
+    }
+  }
+
+  // --- CLOSING FRAME 1: "You're still here" (pct 0.89 → 0.96) ---
+  if (pct > 0.88 && pct < 0.965) {
+    const c1In = smoothstep(0.89, 0.90, pct);
+    const c1Out = 1 - smoothstep(0.945, 0.96, pct);
+    const c1 = c1In * c1Out;
+    if (c1 > 0.01) {
+      ctx.textAlign = 'center';
+
+      ctx.globalAlpha = c1;
+      ctx.font = `italic 400 ${Math.max(38, W*0.042)}px 'Playfair Display', serif`;
+      ctx.fillStyle = 'rgba(255,255,255,0.95)';
+      ctx.fillText('You\'re still here.', W/2, H * 0.40);
+
+      ctx.globalAlpha = c1 * 0.65;
+      ctx.font = `italic 400 ${Math.max(22, W*0.024)}px 'Playfair Display', serif`;
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      ctx.fillText('That already makes you unusual.', W/2, H * 0.52);
+
+      const sec = Math.floor((Date.now()-T0)/1000);
+      const m = Math.floor(sec/60), s = sec%60;
+      ctx.globalAlpha = c1 * 0.8;
+      ctx.fillStyle = '#f59e0b';
+      ctx.font = `500 ${Math.max(18, W*0.018)}px Inter`;
+      ctx.fillText(
+        `You've spent ${m>0?m+' minute'+(m>1?'s':'')+' and ':''}${s} second${s!==1?'s':''} here.`,
+        W/2, H * 0.63
+      );
+    }
+  }
+
+  // --- CLOSING FRAME 2: The narrative payoff (pct 0.965 → 1.0) ---
+  if (pct > 0.96) {
+    const c2In = smoothstep(0.965, 0.975, pct);
+    const c2 = c2In;
+    if (c2 > 0.01) {
+      ctx.textAlign = 'center';
+
+      // "Then → Now" contrast
+      ctx.globalAlpha = c2 * 0.7;
+      ctx.font = `italic 400 ${Math.max(22, W*0.024)}px 'Playfair Display', serif`;
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.fillText('2004: You had 2:30 of focus. The machines had 5%.', W/2, H * 0.30);
+
+      ctx.globalAlpha = c2;
+      ctx.font = `italic 400 ${Math.max(28, W*0.032)}px 'Playfair Display', serif`;
+      ctx.fillStyle = 'rgba(255,255,255,0.95)';
+      ctx.fillText('2024: Your focus is 47 seconds. They own 51%.', W/2, H * 0.44);
+
+      // The thesis — purple, bold
+      const thesisAlpha = smoothstep(0.98, 0.99, pct);
+      ctx.globalAlpha = thesisAlpha;
+      ctx.font = `800 ${Math.max(26, W*0.03)}px Inter`;
+      ctx.fillStyle = '#a78bfa';
+      ctx.fillText('The lines have crossed.', W/2, H * 0.62);
+      ctx.globalAlpha = thesisAlpha * 0.8;
+      ctx.font = `italic 400 ${Math.max(20, W*0.022)}px 'Playfair Display', serif`;
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.fillText('The question is what happens next.', W/2, H * 0.72);
+    }
+  }
+
+  ctx.globalAlpha = 1;
+}
+
+// ============================================================
+//  SPOTLIGHT STATE MACHINE
+// ============================================================
+const spotlight = {
+  active: false,
+  anno: null,
+  elapsed: 0,
+  duration: 3.5, // seconds to hold each card
+  triggeredYears: new Set(),
+};
+
+const SPOTLIGHT_HOLD = {
+  'human': 3.0,    // seconds for human annotations
+  'tech': 3.0,     // seconds for tech annotations
+  'cross': 4.0,    // longer for crossover moments
+};
+
+function checkSpotlight() {
+  if (spotlight.active) return; // already showing one
+  const curYear = currentYear();
+  for (const a of annotations) {
+    const [yr, type] = a;
+    if (spotlight.triggeredYears.has(yr)) continue;
+    if (curYear >= yr - 0.1 && curYear <= yr + 0.5) {
+      spotlight.active = true;
+      spotlight.anno = a;
+      spotlight.elapsed = 0;
+      spotlight.duration = SPOTLIGHT_HOLD[type] || 3.0;
+      spotlight.triggeredYears.add(yr);
+      return;
+    }
+  }
+}
+
+function tickSpotlight(dt) {
+  if (!spotlight.active) return;
+  spotlight.elapsed += dt;
+  if (spotlight.elapsed >= spotlight.duration) {
+    spotlight.active = false;
+    spotlight.anno = null;
+  }
+}
+
+// ============================================================
+//  MAIN LOOP
+// ============================================================
+let creditsStarted = false;
+function startCredits() {
+  if (creditsStarted) return;
+  creditsStarted = true;
+  const c = document.getElementById('credits-container');
+  c.style.display = 'block'; c.style.opacity = '0';
+  c.style.transition = 'opacity 2.5s ease';
+  requestAnimationFrame(()=>c.style.opacity='1');
+  const s = document.getElementById('credits-scroll');
+  const h = s.offsetHeight; let y = H;
+  s.style.top = y+'px';
+  function a(){ y-=0.5; s.style.top=y+'px'; if(y+h>-50)requestAnimationFrame(a); }
+  setTimeout(()=>requestAnimationFrame(a), 2000);
+}
+
+let lastTime = performance.now();
+function loop(now) {
+  const dt = (now - lastTime) / 1000;
+  lastTime = now;
+  frame++;
+
+  if (isPlaying && progress < 1) {
+    // Check if we should trigger a spotlight
+    checkSpotlight();
+
+    if (spotlight.active) {
+      // PAUSE chart progress — only tick the spotlight timer
+      tickSpotlight(dt);
+    } else {
+      // Normal progress
+      progress += SPEED;
+      progress = Math.min(1, progress);
+    }
+  }
+
+  pct = progress;
+  document.getElementById('progress-bar').style.width = (pct*100)+'%';
+
+  // Decide what to render based on phase
+  if (pct < 0.195) {
+    drawIntroFrames();
+  } else {
+    drawChart();
+  }
+
+  if (pct >= 1 && !creditsStarted) setTimeout(startCredits, 3500);
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+})();
+</script>
+</body>
+</html>
