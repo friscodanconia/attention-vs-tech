@@ -380,7 +380,8 @@ function startPlay() {
   if (isPlaying) return;
   isPlaying = true;
   progress = 0.015; // jump right into Frame 1 fade-in
-  document.getElementById('scroll-hint').style.opacity = '0';
+  const hint = document.getElementById('scroll-hint');
+  if (hint) hint.style.opacity = '0';
   document.getElementById('opening').classList.add('hidden');
 }
 // Auto-start after 4s so counters have time to land
