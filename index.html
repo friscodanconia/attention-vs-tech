@@ -118,12 +118,64 @@
     animation: breathe 2s ease infinite;
   }
   @keyframes breathe { 0%,100% { opacity: 0.3; } 50% { opacity: 0.8; } }
+  .scroll-teaser {
+    font-family: 'Playfair Display', serif;
+    font-style: italic; font-weight: 400;
+    font-size: clamp(0.8rem, 1.8vw, 0.95rem);
+    color: rgba(255,255,255,0.35);
+    text-transform: none; letter-spacing: 0;
+    margin-top: 4px;
+  }
+  @keyframes nudge {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-12px); }
+  }
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-arrow, .counter-row { animation: none; opacity: 1; transform: none; }
+    #scroll-hint { transition: none; }
+    #opening { transition: none; }
+  }
 
   /* === PROGRESS === */
   #progress-bar {
-    position: fixed; top: 0; left: 0; height: 2px;
+    position: fixed; top: 0; left: 0; height: 3px;
     background: linear-gradient(90deg, var(--amber), var(--purple), var(--cyan));
     z-index: 100; width: 0%;
+    box-shadow: 0 0 8px rgba(139,92,246,0.5), 0 0 20px rgba(139,92,246,0.2);
+  }
+  /* Chapter dots — right edge */
+  #chapter-dots {
+    position: fixed; right: 16px; top: 50%; transform: translateY(-50%);
+    z-index: 90; display: flex; flex-direction: column; gap: 12px;
+    opacity: 0; transition: opacity 0.6s;
+  }
+  #chapter-dots.visible { opacity: 1; }
+  .ch-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    transition: background 0.4s, transform 0.3s, box-shadow 0.4s;
+    position: relative;
+  }
+  .ch-dot.active {
+    background: rgba(255,255,255,0.9);
+    transform: scale(1.4);
+    box-shadow: 0 0 6px rgba(255,255,255,0.4);
+  }
+  .ch-dot.done { background: rgba(255,255,255,0.45); }
+  .ch-dot-label {
+    position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+    font-size: 0.65rem; color: rgba(255,255,255,0.5);
+    white-space: nowrap; letter-spacing: 0.1em; text-transform: uppercase;
+    opacity: 0; transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .ch-dot:hover .ch-dot-label,
+  .ch-dot.active .ch-dot-label { opacity: 1; }
+  @media (max-width: 680px) {
+    #chapter-dots { right: 8px; gap: 10px; }
+    .ch-dot { width: 6px; height: 6px; }
+    .ch-dot-label { display: none; }
   }
 
   /* === CREDITS === */
@@ -211,6 +263,15 @@
 <div id="scroll-hint">
   <span>Scroll to begin</span>
   <div class="scroll-arrow"></div>
+  <div class="scroll-teaser">See how attention spans dropped 66% since 2004</div>
+</div>
+
+<div id="chapter-dots">
+  <div class="ch-dot" data-ch="hook"><span class="ch-dot-label">Hook</span></div>
+  <div class="ch-dot" data-ch="attention"><span class="ch-dot-label">Attention</span></div>
+  <div class="ch-dot" data-ch="machines"><span class="ch-dot-label">Machines</span></div>
+  <div class="ch-dot" data-ch="chart"><span class="ch-dot-label">The Data</span></div>
+  <div class="ch-dot" data-ch="closing"><span class="ch-dot-label">Closing</span></div>
 </div>
 
 <noscript>
@@ -360,6 +421,49 @@ tickCounters(); // run immediately so first paint is never 0
 setInterval(tickCounters, 80);
 
 // ============================================================
+//  CHAPTER DOTS — right-edge progress indicator
+// ============================================================
+const chapters = [
+  { key: 'hook', start: 0, end: 0.01 },
+  { key: 'attention', start: 0.01, end: 0.13 },
+  { key: 'machines', start: 0.13, end: 0.42 },
+  { key: 'chart', start: 0.42, end: 0.82 },
+  { key: 'closing', start: 0.82, end: 1.0 },
+];
+const dotEls = document.querySelectorAll('.ch-dot');
+const dotsContainer = document.getElementById('chapter-dots');
+
+function updateChapterDots() {
+  if (!isPlaying) return;
+  dotsContainer.classList.add('visible');
+  dotEls.forEach((el, i) => {
+    const ch = chapters[i];
+    el.classList.remove('active', 'done');
+    if (pct >= ch.start && pct < ch.end) el.classList.add('active');
+    else if (pct >= ch.end) el.classList.add('done');
+  });
+}
+
+// ============================================================
+//  AUTO-NUDGE — subtle bounce after 5s if user hasn't scrolled
+// ============================================================
+setTimeout(() => {
+  if (!isPlaying) {
+    const hint = document.getElementById('scroll-hint');
+    if (hint) hint.style.animation = 'nudge 0.6s ease 2';
+  }
+}, 5000);
+
+// ============================================================
+//  EASTER EGG — track engagement for closing frame
+// ============================================================
+let scrollBackCount = 0;
+let lastProgress = 0;
+function trackEngagement() {
+  // Not used for scroll-back since this is auto-play, but track time
+}
+
+// ============================================================
 //  CHART GEOMETRY — generous margins so nothing bleeds
 // ============================================================
 // Responsive margins — tighter on mobile
@@ -411,12 +515,12 @@ function interpCurve(pts, year) {
 const annotations = [
   [2004, 'human', '2:30', 'Gloria Mark measures focus time'],
   [2007, 'tech', 'iPhone', 'A glass rectangle changes everything'],
-  [2009, 'human', '3 seconds', '40% abandon a page after 3 sec — Akamai'],
+  [2009, 'human', '3 seconds', '40% abandon a page after 3 sec'],
   [2012, 'human', '1:15', 'Focus halved. 25 min to recover.'],
-  [2016, 'cross', 'THE CROSSOVER', 'Digital ads surpass TV — $72.5B vs $71.3B'],
-  [2018, 'tech', 'GPT-1', '117M parameters — a bathtub of sand'],
-  [2020, 'tech', 'GPT-3', '175B params — 1,500x in 2 years'],
-  [2022, 'human', '0:47', '47 seconds of focus — down 70% since 2004'],
+  [2016, 'cross', 'THE CROSSOVER', 'Digital ads surpass TV. $72.5B vs $71.3B'],
+  [2018, 'tech', 'GPT-1', '117M parameters. A bathtub of sand.'],
+  [2020, 'tech', 'GPT-3', '175B params. 1,500x in 2 years.'],
+  [2022, 'human', '0:47', '47 seconds of focus. Down 70% since 2004.'],
   [2024, 'cross', 'THE TAKEOVER', 'Bots outnumber humans. Half of articles are AI.'],
   [2026, 'cross', 'NOW', 'Projected: 90% of content is synthetic'],
 ];
@@ -934,6 +1038,15 @@ function drawChart() {
         `You've spent ${m>0?m+' minute'+(m>1?'s':'')+' and ':''}${s} second${s!==1?'s':''} here.`,
         W/2, H * 0.63
       );
+
+      // Easter egg — personalized stat
+      ctx.globalAlpha = c1 * 0.5;
+      ctx.fillStyle = 'rgba(255,255,255,0.55)';
+      ctx.font = `italic 400 ${m1 ? Math.max(13, W*0.035) : Math.max(15, W*0.015)}px 'Playfair Display', serif`;
+      const multiple = Math.round(sec / 47);
+      if (multiple >= 2) {
+        ctx.fillText(`That's ${multiple}x the average attention span.`, W/2, H * 0.70);
+      }
     }
   }
 
@@ -1058,6 +1171,7 @@ function startCredits() {
   c.style.display = 'block'; c.style.opacity = '0';
   c.style.transition = 'opacity 2.5s ease';
   requestAnimationFrame(()=>c.style.opacity='1');
+  dotsContainer.classList.remove('visible');
   const s = document.getElementById('credits-scroll');
   const h = s.offsetHeight; let y = H;
   s.style.top = y+'px';
@@ -1087,6 +1201,7 @@ function loop(now) {
 
   pct = progress;
   document.getElementById('progress-bar').style.width = (pct*100)+'%';
+  updateChapterDots();
 
   // Decide what to render based on phase
   if (pct < 0.41) {
