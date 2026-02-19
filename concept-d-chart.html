@@ -260,11 +260,6 @@
   <div class="opening-coda">But this is worth staying for.</div>
 </div>
 
-<div id="scroll-hint">
-  <span>Scroll to begin</span>
-  <div class="scroll-arrow"></div>
-  <div class="scroll-teaser">See how attention spans dropped 66% since 2004</div>
-</div>
 
 <div id="chapter-dots">
   <div class="ch-dot" data-ch="hook"><span class="ch-dot-label">Hook</span></div>
@@ -388,6 +383,9 @@ function startPlay() {
   document.getElementById('scroll-hint').style.opacity = '0';
   document.getElementById('opening').classList.add('hidden');
 }
+// Auto-start after 4s so counters have time to land
+setTimeout(startPlay, 4000);
+// Also allow manual start via scroll/click/touch
 window.addEventListener('wheel', startPlay, { once: true, passive: true });
 window.addEventListener('touchstart', startPlay, { once: true, passive: true });
 window.addEventListener('click', startPlay, { once: true });
@@ -444,15 +442,6 @@ function updateChapterDots() {
   });
 }
 
-// ============================================================
-//  AUTO-NUDGE — subtle bounce after 5s if user hasn't scrolled
-// ============================================================
-setTimeout(() => {
-  if (!isPlaying) {
-    const hint = document.getElementById('scroll-hint');
-    if (hint) hint.style.animation = 'nudge 0.6s ease 2';
-  }
-}, 5000);
 
 // ============================================================
 //  EASTER EGG — track engagement for closing frame
