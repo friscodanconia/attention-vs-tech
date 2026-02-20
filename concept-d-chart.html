@@ -368,10 +368,10 @@ const SPEED = 1 / (DURATION * 60);
 // ============================================================
 //  TIMELINE PHASES (45s base + ~27s spotlight pauses ≈ 72s total)
 //  0.00–0.01  Opening counters (HTML overlay)
-//  0.01–0.16  Intro Frame 1: YOUR ATTENTION (~5.7s)
-//  0.16–0.385 Intro Frame 2: THE MACHINES (~8.6s)
-//  0.385–0.495 Transition: "Here is what happened." (~4.2s)
-//  0.495–0.82 Chart draws with spotlight pauses (~12.4s)
+//  0.01–0.13  Intro Frame 1: YOUR ATTENTION (~4.6s)
+//  0.13–0.31  Intro Frame 2: THE MACHINES (~6.8s)
+//  0.31–0.40  Transition: "Here is what happened." (~3.4s)
+//  0.40–0.82  Chart draws with spotlight pauses (~16s)
 //  0.84–0.96  Closing 1: "You're still here" (~4.6s)
 //  0.965–1.00 Closing 2: Narrative payoff + credits
 // ============================================================
@@ -424,9 +424,9 @@ setInterval(tickCounters, 80);
 // ============================================================
 const chapters = [
   { key: 'hook', start: 0, end: 0.01 },
-  { key: 'attention', start: 0.01, end: 0.16 },
-  { key: 'machines', start: 0.16, end: 0.495 },
-  { key: 'chart', start: 0.495, end: 0.82 },
+  { key: 'attention', start: 0.01, end: 0.13 },
+  { key: 'machines', start: 0.13, end: 0.40 },
+  { key: 'chart', start: 0.40, end: 0.82 },
   { key: 'closing', start: 0.82, end: 1.0 },
 ];
 const dotEls = document.querySelectorAll('.ch-dot');
@@ -530,10 +530,10 @@ function drawIntroFrames() {
   ctx.fillStyle = '#08090f';
   ctx.fillRect(0, 0, W, H);
 
-  // FRAME 1: YOUR ATTENTION (amber) — pct 0.01 to 0.16 (~5.7s)
-  if (pct >= 0.01 && pct < 0.165) {
+  // FRAME 1: YOUR ATTENTION (amber) — pct 0.01 to 0.13 (~4.6s)
+  if (pct >= 0.01 && pct < 0.135) {
     const fadeIn1 = smoothstep(0.01, 0.015, pct);
-    const fadeOut1 = 1 - smoothstep(0.15, 0.16, pct);
+    const fadeOut1 = 1 - smoothstep(0.12, 0.13, pct);
     const a1 = fadeIn1 * fadeOut1;
 
     if (a1 > 0.01) {
@@ -584,10 +584,10 @@ function drawIntroFrames() {
     }
   }
 
-  // FRAME 2: THE MACHINES (cyan) — pct 0.16 to 0.385
-  if (pct >= 0.155 && pct < 0.39) {
-    const fadeIn2 = smoothstep(0.16, 0.165, pct);
-    const fadeOut2 = 1 - smoothstep(0.375, 0.385, pct);
+  // FRAME 2: THE MACHINES (cyan) — pct 0.13 to 0.31
+  if (pct >= 0.125 && pct < 0.315) {
+    const fadeIn2 = smoothstep(0.13, 0.135, pct);
+    const fadeOut2 = 1 - smoothstep(0.30, 0.31, pct);
     const a2 = fadeIn2 * fadeOut2;
 
     if (a2 > 0.01) {
@@ -637,10 +637,10 @@ function drawIntroFrames() {
     }
   }
 
-  // FRAME 3: TRANSITION — pct 0.385 to 0.495
-  if (pct >= 0.38 && pct < 0.50) {
-    const fadeIn3 = smoothstep(0.385, 0.39, pct);
-    const fadeOut3 = 1 - smoothstep(0.485, 0.495, pct);
+  // FRAME 3: TRANSITION — pct 0.31 to 0.40
+  if (pct >= 0.305 && pct < 0.405) {
+    const fadeIn3 = smoothstep(0.31, 0.315, pct);
+    const fadeOut3 = 1 - smoothstep(0.39, 0.40, pct);
     const a3 = fadeIn3 * fadeOut3;
 
     if (a3 > 0.01) {
@@ -665,8 +665,8 @@ function drawIntroFrames() {
 //  MAIN CHART
 // ============================================================
 function currentYear() {
-  // Chart draws during pct 0.495–0.82
-  const chartPct = Math.max(0, Math.min(1, (pct - 0.495) / 0.325));
+  // Chart draws during pct 0.40–0.82
+  const chartPct = Math.max(0, Math.min(1, (pct - 0.40) / 0.42));
   return 2004 + chartPct * 22;
 }
 
@@ -674,9 +674,9 @@ function drawChart() {
   ctx.fillStyle = '#08090f';
   ctx.fillRect(0, 0, W, H);
 
-  if (pct < 0.49) return; // not in chart phase yet
+  if (pct < 0.39) return; // not in chart phase yet
 
-  const fadeIn = smoothstep(0.49, 0.50, pct);
+  const fadeIn = smoothstep(0.39, 0.41, pct);
   // Fade everything out when closing begins so "You're still here" gets a clean screen
   const closingDim = 1 - smoothstep(0.82, 0.86, pct);
   const vis = fadeIn * closingDim; // master visibility for chart elements
@@ -959,7 +959,7 @@ function drawChart() {
   }
 
   // --- LEGEND (drawn after spotlight overlay so it stays in foreground) ---
-  if (pct > 0.495 && pct < 0.84) {
+  if (pct > 0.40 && pct < 0.84) {
     const mob = isMobile();
     if (mob) {
       const sz = Math.max(11, W * 0.028);
@@ -1175,7 +1175,7 @@ function loop(now) {
 
   if (isPlaying && progress < 1) {
     // Only check spotlights once we're in the chart phase (past intro frames)
-    if (progress >= 0.495) checkSpotlight();
+    if (progress >= 0.40) checkSpotlight();
 
     if (spotlight.active) {
       // PAUSE chart progress — only tick the spotlight timer
@@ -1192,7 +1192,7 @@ function loop(now) {
   updateChapterDots();
 
   // Decide what to render based on phase
-  if (pct < 0.49) {
+  if (pct < 0.39) {
     drawIntroFrames();
   } else {
     drawChart();
