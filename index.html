@@ -828,52 +828,6 @@ function drawChart() {
     ctx.fillText('Machine: ' + techPctVal + '%', cx + labelOff, tY + 22);
   }
 
-  // --- LEGEND (top of page) ---
-  if (pct > 0.495) {
-    const spotDim = spotlight.active ? 0.3 : 1;
-    const mob = isMobile();
-
-    if (mob) {
-      // Mobile: stacked legend, compact
-      const sz = Math.max(11, W * 0.028);
-      const ly1 = 18, ly2 = 38;
-      ctx.textAlign = 'left';
-      ctx.globalAlpha = vis * 0.85 * spotDim;
-      ctx.fillStyle = '#f59e0b';
-      ctx.fillRect(MARGIN.left, ly1 - 3, 16, 2.5);
-      ctx.font = `700 ${sz}px Inter`;
-      ctx.fillText('ATTENTION SPAN', MARGIN.left + 22, ly1);
-
-      ctx.fillStyle = '#06b6d4';
-      ctx.fillRect(MARGIN.left, ly2 - 3, 16, 2.5);
-      ctx.fillText('DIGITAL / AI FOOTPRINT', MARGIN.left + 22, ly2);
-    } else {
-      // Desktop: left/right legend with sub-copy
-      const ly = 32;
-      const sz = Math.max(14, W * 0.013);
-      const subSz = Math.max(11, W * 0.01);
-      ctx.globalAlpha = vis * 0.85 * spotDim;
-      ctx.textAlign = 'left';
-      ctx.font = `700 ${sz}px Inter`;
-      ctx.fillStyle = '#f59e0b';
-      ctx.fillRect(MARGIN.left, ly - 4, 22, 3);
-      ctx.fillText('YOUR ATTENTION SPAN', MARGIN.left + 30, ly);
-      ctx.globalAlpha = vis * 0.5 * spotDim;
-      ctx.font = `400 ${subSz}px Inter`;
-      ctx.fillText('Time on a single screen before switching', MARGIN.left + 30, ly + 16);
-
-      ctx.globalAlpha = vis * 0.85 * spotDim;
-      ctx.textAlign = 'right';
-      ctx.font = `700 ${sz}px Inter`;
-      ctx.fillStyle = '#06b6d4';
-      ctx.fillRect(W - MARGIN.right - 22, ly - 4, 22, 3);
-      ctx.fillText('DIGITAL / AI FOOTPRINT', W - MARGIN.right - 30, ly);
-      ctx.globalAlpha = vis * 0.5 * spotDim;
-      ctx.font = `400 ${subSz}px Inter`;
-      ctx.fillText('Bot traffic, AI content, automated decisions', W - MARGIN.right - 30, ly + 16);
-    }
-  }
-
   // =====================================================
   //  SPOTLIGHT CARDS — pause, dim chart, show annotation
   // =====================================================
@@ -997,6 +951,46 @@ function drawChart() {
       } else {
         ctx.fillText(detail, W / 2, innerTop + zone * 2.5 + 6);
       }
+    }
+  }
+
+  // --- LEGEND (drawn after spotlight overlay so it stays in foreground) ---
+  if (pct > 0.495 && pct < 0.84) {
+    const mob = isMobile();
+    if (mob) {
+      const sz = Math.max(11, W * 0.028);
+      const ly1 = 18, ly2 = 38;
+      ctx.textAlign = 'left';
+      ctx.globalAlpha = vis * 0.85;
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillRect(MARGIN.left, ly1 - 3, 16, 2.5);
+      ctx.font = `700 ${sz}px Inter`;
+      ctx.fillText('ATTENTION SPAN', MARGIN.left + 22, ly1);
+      ctx.fillStyle = '#06b6d4';
+      ctx.fillRect(MARGIN.left, ly2 - 3, 16, 2.5);
+      ctx.fillText('DIGITAL / AI FOOTPRINT', MARGIN.left + 22, ly2);
+    } else {
+      const ly = 32;
+      const sz = Math.max(14, W * 0.013);
+      const subSz = Math.max(11, W * 0.01);
+      ctx.globalAlpha = vis * 0.85;
+      ctx.textAlign = 'left';
+      ctx.font = `700 ${sz}px Inter`;
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillRect(MARGIN.left, ly - 4, 22, 3);
+      ctx.fillText('YOUR ATTENTION SPAN', MARGIN.left + 30, ly);
+      ctx.globalAlpha = vis * 0.5;
+      ctx.font = `400 ${subSz}px Inter`;
+      ctx.fillText('Time on a single screen before switching', MARGIN.left + 30, ly + 16);
+      ctx.globalAlpha = vis * 0.85;
+      ctx.textAlign = 'right';
+      ctx.font = `700 ${sz}px Inter`;
+      ctx.fillStyle = '#06b6d4';
+      ctx.fillRect(W - MARGIN.right - 22, ly - 4, 22, 3);
+      ctx.fillText('DIGITAL / AI FOOTPRINT', W - MARGIN.right - 30, ly);
+      ctx.globalAlpha = vis * 0.5;
+      ctx.font = `400 ${subSz}px Inter`;
+      ctx.fillText('Bot traffic, AI content, automated decisions', W - MARGIN.right - 30, ly + 16);
     }
   }
 
