@@ -533,7 +533,9 @@ function drawIntroFrames() {
   // FRAME 1: YOUR ATTENTION (amber) — pct 0.01 to 0.13 (~4.6s)
   if (pct >= 0.01 && pct < 0.135) {
     const fadeIn1 = smoothstep(0.01, 0.015, pct);
-    const fadeOut1 = 1 - smoothstep(0.12, 0.13, pct);
+    const fadeOut1Desktop = 1 - smoothstep(0.117, 0.135, pct);
+    const fadeOut1Mobile = 1 - smoothstep(0.12, 0.13, pct);
+    const fadeOut1 = isMobile() ? fadeOut1Mobile : fadeOut1Desktop;
     const a1 = fadeIn1 * fadeOut1;
 
     if (a1 > 0.01) {
@@ -587,7 +589,9 @@ function drawIntroFrames() {
   // FRAME 2: THE MACHINES (cyan) — pct 0.13 to 0.31
   if (pct >= 0.125 && pct < 0.315) {
     const fadeIn2 = smoothstep(0.13, 0.135, pct);
-    const fadeOut2 = 1 - smoothstep(0.30, 0.31, pct);
+    const fadeOut2Desktop = 1 - smoothstep(0.296, 0.315, pct);
+    const fadeOut2Mobile = 1 - smoothstep(0.30, 0.31, pct);
+    const fadeOut2 = isMobile() ? fadeOut2Mobile : fadeOut2Desktop;
     const a2 = fadeIn2 * fadeOut2;
 
     if (a2 > 0.01) {
